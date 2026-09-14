@@ -99,8 +99,8 @@
               <button class="shape-button" type="button" data-shape="capsule" aria-pressed="false"><span class="shape-swatch capsule-swatch" aria-hidden="true"></span><span>Capsule</span></button>
             </div>
             <button id="spawn-button" class="primary-button" type="button"><span>＋</span> Spawn soft body <kbd>B</kbd></button>
-            <div class="spawn-meta"><button id="clear-button" class="secondary-button" type="button"><span>×</span> Clear field <kbd>C</kbd></button><button id="remix-button" class="secondary-button remix-button" type="button"><span>↻</span> Remix field <kbd>M</kbd></button></div>
-            <div class="spawn-note">clear keeps obstacles · remix builds a fresh cluster</div>
+            <div class="spawn-meta"><button id="clear-button" class="secondary-button" type="button"><span>×</span> Clear field <kbd>C</kbd></button><button id="remix-button" class="secondary-button remix-button" type="button"><span>↻</span> Remix field <kbd>M</kbd></button><button id="pulse-button" class="secondary-button pulse-button" type="button" aria-label="Pulse the field outward from the core (P)" title="Pulse the field outward from the core (P)"><span>◌</span> Pulse <kbd>P</kbd></button></div>
+            <div class="spawn-note">clear keeps obstacles · remix builds a fresh cluster · pulse wakes the field</div>
           </section>
 
           <section class="control-section sliders-section">
@@ -165,6 +165,7 @@
             <span class="key-hint"><kbd>D</kbd> duplicate</span>
             <span class="key-hint"><kbd>F</kbd> pin</span>
             <span class="key-hint"><kbd>M</kbd> remix</span>
+            <span class="key-hint"><kbd>P</kbd> pulse</span>
             <span class="key-hint"><kbd>G</kbd> guides</span>
             <span class="key-hint"><kbd>1—9</kbd> scenes</span>
           </div>
@@ -241,6 +242,7 @@
           <div><kbd>2×</kbd><span>Double-click empty space to drop the selected shape</span></div>
           <div><kbd>F</kbd><span>Pin or unpin the selected body</span></div>
           <div><kbd>M</kbd><span>Remix the live bodies into a fresh cluster</span></div>
+          <div><kbd>P</kbd><span>Pulse moving bodies outward from the core</span></div>
           <div><span class="shortcut-pointer" aria-hidden="true">↗</span><span>Drag a body to throw it</span></div>
         </div>
         <form method="dialog"><button class="dialog-close" type="submit">Close</button></form>

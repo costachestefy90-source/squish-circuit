@@ -41,6 +41,7 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Double-click empty stage space to drop the selected shape at that location.
 - Clear the live bodies with **Clear field** or press `C`; the active scene's obstacles remain in place.
 - Use **Remix field** or press `M` to clear and repopulate the scene with a fresh, varied cluster while keeping its obstacles and world settings.
+- Use **Pulse** or press `P` to send a short outward impulse from the scene core; pinned bodies stay put.
 - Duplicate the selected body with `D` or the `＋` action in the inspector, preserving its shape and current motion.
 - Pin or unpin the selected body with `F` or the inspector action; pinned bodies hold their exact shape and position while the rest of the field continues moving.
 - Drag any body on the stage to throw it through the field.

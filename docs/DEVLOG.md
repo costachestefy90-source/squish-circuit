@@ -101,3 +101,7 @@ The control deck now has a **Remix field** action and `M` shortcut. It clears on
 ## 24 — Correcting signed controls
 
 The wind and vortex sliders now use a true 0–100 centered range, matching their signed values and the visual midpoint marker. This removes an edge case where the internal normalized mapping could be pushed beyond the intended −100% to +100% field range.
+
+## 25 — Waking the field
+
+The lab now has a **Pulse** action and `P` shortcut. A pulse sends a short outward impulse from the active scene's core to moving bodies and paints a brief expanding ripple on the canvas; pinned bodies are intentionally unaffected. It gives experiments a repeatable burst of energy without requiring a precise drag gesture.

@@ -23,6 +23,7 @@ let lastListRender = 0;
 let elapsedSeconds = 0;
 let fps = 60;
 const bodyTrails = new Map<number, Array<{ x: number; y: number }>>();
+let pulseVisual: { x: number; y: number; age: number } | undefined;
 
 const sceneKicker = must<HTMLSpanElement>('scene-kicker');
 const sceneDescription = must<HTMLSpanElement>('scene-description');
@@ -50,6 +51,7 @@ const selectedLoad = must<HTMLElement>('selected-load');
 const selectedCopy = must<HTMLParagraphElement>('selected-copy');
 const clearButton = must<HTMLButtonElement>('clear-button');
 const remixButton = must<HTMLButtonElement>('remix-button');
+const pulseButton = must<HTMLButtonElement>('pulse-button');
 const duplicateButton = must<HTMLButtonElement>('duplicate-button');
 const freezeButton = must<HTMLButtonElement>('freeze-button');
 const freezeLabel = must<HTMLSpanElement>('freeze-label');
@@ -146,6 +148,7 @@ function updateSceneLabels(): void {
 function loadPreset(id: PresetId): void {
   engine.loadPreset(id);
   bodyTrails.clear();
+  pulseVisual = undefined;
   selectedBodyId = engine.bodies[0]?.id ?? null;
   syncControls();
   updateSceneLabels();
@@ -408,6 +411,26 @@ function drawVortexField(width: number, height: number): void {
   ctx.restore();
 }
 
+function drawPulse(width: number, height: number): void {
+  if (!pulseVisual) return;
+  const progress = clamp(pulseVisual.age / 0.9, 0, 1);
+  const radius = 12 + progress * Math.min(width, height) * 0.58;
+  const alpha = (1 - progress) * 0.44;
+  ctx.save();
+  ctx.strokeStyle = `rgba(112, 231, 194, ${alpha})`;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([7, 8]);
+  ctx.beginPath();
+  ctx.arc(pulseVisual.x, pulseVisual.y, radius, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = `rgba(220, 255, 243, ${(1 - progress) * 0.62})`;
+  ctx.beginPath();
+  ctx.arc(pulseVisual.x, pulseVisual.y, Math.max(2, 4 - progress * 2), 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
 function obstacleColor(obstacle: Obstacle): string {
   if (obstacle.tone === 'lilac') return '#b895f1';
   if (obstacle.tone === 'orange') return '#f1ad68';
@@ -585,6 +608,7 @@ function drawScene(): void {
   drawCornerMarks(width, height);
   drawWindField(width, height);
   drawVortexField(width, height);
+  drawPulse(width, height);
   for (const obstacle of engine.obstacles) drawObstacle(obstacle);
   for (const body of engine.bodies) drawBody(body);
   ctx.save();
@@ -615,6 +639,7 @@ let remixCount = 0;
 function remixField(): void {
   engine.clear();
   bodyTrails.clear();
+  pulseVisual = undefined;
   remixCount += 1;
   const shapes: SoftBodyShape[] = ['cube', 'blob', 'pillow', 'orb', 'capsule'];
   let lastBody: SoftBody | undefined;
@@ -637,6 +662,7 @@ function remixField(): void {
 function clearField(): void {
   engine.clear();
   bodyTrails.clear();
+  pulseVisual = undefined;
   setSelectedBody(null);
 }
 
@@ -646,6 +672,13 @@ function toggleSelectedFreeze(): void {
   engine.setFrozen(body);
   renderObjectList();
   updateInspector();
+}
+
+function pulseField(): void {
+  const x = engine.width * 0.5;
+  const y = engine.height * 0.43;
+  engine.pulse(x, y);
+  pulseVisual = { x, y, age: 0 };
 }
 
 function updateMotionTrails(): void {
@@ -715,6 +748,7 @@ clearButton.addEventListener('click', () => {
   clearField();
 });
 remixButton.addEventListener('click', remixField);
+pulseButton.addEventListener('click', pulseField);
 must<HTMLButtonElement>('remove-button').addEventListener('click', () => {
   if (selectedBodyId === null) return;
   bodyTrails.delete(selectedBodyId);
@@ -817,6 +851,8 @@ window.addEventListener('keydown', (event) => {
     toggleSelectedFreeze();
   } else if (event.key.toLowerCase() === 'm') {
     remixField();
+  } else if (event.key.toLowerCase() === 'p') {
+    pulseField();
   } else if (/^[1-9]$/.test(event.key)) {
     loadPreset(PRESETS[Number(event.key) - 1].id);
   }
@@ -844,6 +880,10 @@ function tick(now: number): void {
   lastFrame = now;
   elapsedSeconds += delta;
   fps = fps * 0.92 + (1 / delta) * 0.08;
+  if (pulseVisual) {
+    pulseVisual.age += delta;
+    if (pulseVisual.age > 0.94) pulseVisual = undefined;
+  }
   engine.step(delta);
   updateMotionTrails();
   drawScene();

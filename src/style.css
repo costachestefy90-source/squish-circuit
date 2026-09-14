@@ -183,6 +183,8 @@ kbd { border: 1px solid var(--line-strong); border-bottom-color: rgba(255, 255, 
 .secondary-button kbd { margin-left: 4px; }
 .remix-button:hover { color: var(--mint); }
 .remix-button > span { color: var(--mint); }
+.pulse-button:hover { color: var(--orange); }
+.pulse-button > span { color: var(--orange); }
 .text-button { border: 0; padding: 0; background: transparent; color: var(--subtle); font-family: var(--mono); font-size: 8px; cursor: pointer; }
 .text-button:hover { color: var(--mint); }
 

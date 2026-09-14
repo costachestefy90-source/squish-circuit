@@ -396,6 +396,31 @@ export class SoftBodyEngine {
     this.bodies = [];
   }
 
+  pulse(x = this.width * 0.5, y = this.height * 0.43, strength = 1): void {
+    const maxDistance = Math.hypot(this.width, this.height) * 0.58;
+    for (const body of this.bodies) {
+      if (body.frozen || body.dragging) continue;
+      const center = bodyCenter(body);
+      let dx = center.x - x;
+      let dy = center.y - y;
+      const distanceFromCore = Math.hypot(dx, dy);
+      if (distanceFromCore < 0.001) {
+        dx = 1;
+        dy = 0;
+      }
+      const influence = clamp(1 - distanceFromCore / maxDistance, 0, 1);
+      if (influence <= 0) continue;
+      const impulse = (18 + strength * 44) * influence;
+      const velocity = this.getBodyVelocity(body);
+      const velocityX = velocity.x + (dx / Math.hypot(dx, dy)) * impulse;
+      const velocityY = velocity.y + (dy / Math.hypot(dx, dy)) * impulse;
+      for (const point of body.points) {
+        point.oldX = point.x - velocityX / 60;
+        point.oldY = point.y - velocityY / 60;
+      }
+    }
+  }
+
   setFrozen(body: SoftBody, frozen = !body.frozen): void {
     body.frozen = frozen;
     body.dragVelocity = { x: 0, y: 0 };
