@@ -80,7 +80,9 @@ function syncControls(): void {
     const setting = input.dataset.setting as keyof PhysicsSettings;
     const value = engine.settings[setting];
     if (typeof value !== 'number') continue;
-    input.value = String(sliderValueFor(setting, value));
+    const sliderValue = sliderValueFor(setting, value);
+    input.value = String(sliderValue);
+    input.style.setProperty('--value', `${sliderValue}%`);
     const output = sliderOutputs[setting];
     if (output) output.value = formatSetting(setting, value);
   }
@@ -447,7 +449,8 @@ pauseButton.addEventListener('click', () => {
   engine.paused = !engine.paused;
   updatePauseState();
 });
-must<HTMLInputElement>('guides-toggle').addEventListener('change', (event) => {
+const guidesToggle = must<HTMLInputElement>('guides-toggle');
+guidesToggle.addEventListener('change', (event) => {
   showGuides = (event.target as HTMLInputElement).checked;
 });
 
@@ -456,6 +459,7 @@ for (const input of sliderInputs) {
     const setting = input.dataset.setting as keyof PhysicsSettings;
     const rawValue = Number(input.value) / 100;
     engine.settings[setting] = setting === 'gravity' ? rawValue * 2 : rawValue;
+    input.style.setProperty('--value', `${input.value}%`);
     const output = sliderOutputs[setting];
     if (output) output.value = formatSetting(setting, engine.settings[setting]);
     updateInspector();
@@ -508,6 +512,9 @@ window.addEventListener('keydown', (event) => {
     loadPreset(engine.currentPreset.id);
   } else if (event.key.toLowerCase() === 'b') {
     spawnSelectedShape();
+  } else if (event.key.toLowerCase() === 'g') {
+    guidesToggle.checked = !guidesToggle.checked;
+    showGuides = guidesToggle.checked;
   } else if (/^[1-7]$/.test(event.key)) {
     loadPreset(PRESETS[Number(event.key) - 1].id);
   }

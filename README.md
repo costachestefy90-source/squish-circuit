@@ -38,7 +38,7 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Drag any body on the stage to throw it through the field.
 - Click an object in the manifest to inspect it; use `×` to remove the selection.
 - Press `Space` to pause/resume and `R` to reset the active scene.
-- Toggle **Spring guides** to reveal the live network links.
+- Toggle **Spring guides** to reveal the live network links, or press `G`.
 - Tune the material and world sliders while the solver is running.
 
 ## Development

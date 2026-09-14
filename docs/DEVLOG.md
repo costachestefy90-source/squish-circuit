@@ -22,3 +22,6 @@ The interface was built around the physics: material sliders expose softness, pr
 
 The app was kept static: Vite builds the TypeScript and Canvas 2D client into `dist/`, with no backend or runtime service. The GitHub Pages workflow was enabled and the public demo was checked over HTTPS. The final obstacle-course state was exported with the app's **SAVE PNG** control and used as the project banner. The public links are kept in the project README.
 
+## 05 — Small interaction polish
+
+After the first live pass, I tightened two details that matter during repeated testing: slider tracks now show their actual normalized values instead of a fixed midpoint fill, and the spring-guide toggle can be driven with `G` in addition to the visible switch. The shortcut strip now exposes spawn and guide controls alongside pause, reset, and scene selection.
