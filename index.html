@@ -23,7 +23,7 @@
         </a>
         <div class="topbar-status">
           <span class="live-dot" aria-hidden="true"></span>
-          <span id="sim-status">SIMULATION ONLINE</span>
+          <span id="sim-status" role="status" aria-live="polite" aria-atomic="true">SIMULATION ONLINE</span>
           <span class="status-divider" aria-hidden="true"></span>
           <span id="clock-readout">00:00:00</span>
         </div>
@@ -147,7 +147,7 @@
 
         <section class="stage-panel panel" aria-label="Soft body simulation stage">
           <div class="stage-toolbar">
-            <div class="stage-title"><span class="signal-icon" aria-hidden="true"></span><span id="scene-kicker">SCENE / JELLY CUBES</span></div>
+            <div class="stage-title"><span class="signal-icon" aria-hidden="true"></span><span id="scene-kicker" role="status" aria-live="polite" aria-atomic="true">SCENE / JELLY CUBES</span></div>
             <div class="stage-tools">
               <button id="export-button" class="text-button stage-export-button" type="button" title="Download a PNG snapshot of the simulation">SAVE PNG</button>
               <span id="export-status" class="export-status" aria-live="polite">READY</span>
