@@ -57,6 +57,8 @@ The app is intentionally written so the same build works locally and from a GitH
 
 Before implementation, five directions were considered and recorded in [`DECISIONS.md`](DECISIONS.md): SVG spring rings, a Canvas Verlet mesh, a WebGL metaball field, compound constraint bodies, and a hybrid playground. The hybrid Canvas 2D spring-ring approach won because it keeps the physics inspectable and reliable while leaving room for expressive visuals and responsive controls.
 
+The factual milestone log is in [`docs/DEVLOG.md`](docs/DEVLOG.md), including the exported obstacle-course frame used for the Stardance banner.
+
 ## Credits and scope
 
 Squish Circuit is an original Stardance project. Development was AI-assisted, with the implementation, physics model, copy, visual system, testing, and deployment configuration created for this project. It intentionally remains unshipped in Stardance for review.
