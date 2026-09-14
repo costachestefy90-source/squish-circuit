@@ -627,13 +627,14 @@ export class SoftBodyEngine {
         const bCenter = bodyCenter(b);
         let dx = bCenter.x - aCenter.x;
         let dy = bCenter.y - aCenter.y;
+        const minimum = (a.radius + b.radius) * 0.66;
+        if (Math.abs(dx) >= minimum || Math.abs(dy) >= minimum) continue;
         let length = Math.hypot(dx, dy);
         if (length < 0.001) {
           dx = 1;
           dy = 0;
           length = 1;
         }
-        const minimum = (a.radius + b.radius) * 0.66;
         if (length >= minimum) continue;
         const overlap = minimum - length;
         const nx = dx / length;

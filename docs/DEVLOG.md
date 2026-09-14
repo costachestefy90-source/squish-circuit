@@ -41,3 +41,7 @@ The final interface pass added a keyboard-reference dialog that can be opened fr
 ## 09 — Tightening contact resolution
 
 While exercising scenes with several bodies, I removed a stale-center edge case in pairwise overlap resolution. Each collision pair now measures both current centers after earlier contacts in the same pass, keeping chained body contacts more stable without adding solver passes or changing the compact Verlet model.
+
+## 10 — Keeping crowded scenes light
+
+The collision pass now rejects body pairs whose center-distance bounding box cannot overlap before calculating a square root. It keeps the same contact threshold and response, but reduces unnecessary distance work when users spawn a larger cluster of soft bodies.
