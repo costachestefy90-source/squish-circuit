@@ -47,6 +47,7 @@ const selectedSpeed = must<HTMLElement>('selected-speed');
 const selectedCompression = must<HTMLElement>('selected-compression');
 const selectedLoad = must<HTMLElement>('selected-load');
 const selectedCopy = must<HTMLParagraphElement>('selected-copy');
+const clearButton = must<HTMLButtonElement>('clear-button');
 const memoryMeter = must<HTMLElement>('memory-meter');
 const memoryReadout = must<HTMLElement>('memory-readout');
 const energyReadout = must<HTMLElement>('energy-readout');
@@ -429,6 +430,31 @@ function drawBody(body: SoftBody): void {
     ctx.arc(center.x, center.y, body.radius * 1.28, 0, Math.PI * 2);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    const velocity = engine.getBodyVelocity(body);
+    const speed = Math.hypot(velocity.x, velocity.y);
+    if (speed > 8) {
+      const vectorLength = Math.min(42, 10 + speed * 0.11);
+      const directionX = velocity.x / speed;
+      const directionY = velocity.y / speed;
+      const startX = center.x + directionX * body.radius * 0.9;
+      const startY = center.y + directionY * body.radius * 0.9;
+      const endX = startX + directionX * vectorLength;
+      const endY = startY + directionY * vectorLength;
+      ctx.strokeStyle = hexToRgba('#ffffff', 0.62);
+      ctx.fillStyle = hexToRgba('#ffffff', 0.72);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(endX, endY);
+      ctx.lineTo(endX - directionX * 6 - directionY * 3, endY - directionY * 6 + directionX * 3);
+      ctx.lineTo(endX - directionX * 6 + directionY * 3, endY - directionY * 6 - directionX * 3);
+      ctx.closePath();
+      ctx.fill();
+    }
   }
   ctx.restore();
 }
@@ -522,6 +548,10 @@ exportButton.addEventListener('click', () => {
   }, 'image/png');
 });
 must<HTMLButtonElement>('reset-button').addEventListener('click', () => loadPreset(engine.currentPreset.id));
+clearButton.addEventListener('click', () => {
+  engine.clear();
+  setSelectedBody(null);
+});
 must<HTMLButtonElement>('remove-button').addEventListener('click', () => {
   if (selectedBodyId === null) return;
   engine.removeBody(selectedBodyId);
@@ -605,6 +635,9 @@ window.addEventListener('keydown', (event) => {
   } else if (event.key.toLowerCase() === 'g') {
     guidesToggle.checked = !guidesToggle.checked;
     showGuides = guidesToggle.checked;
+  } else if (event.key.toLowerCase() === 'c') {
+    engine.clear();
+    setSelectedBody(null);
   } else if (/^[1-8]$/.test(event.key)) {
     loadPreset(PRESETS[Number(event.key) - 1].id);
   }

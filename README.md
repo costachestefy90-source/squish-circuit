@@ -37,6 +37,7 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Click a scene card or press `1`–`8` to load a preset.
 - Choose a spawn shape and click **Spawn soft body**, or press `B`.
 - Double-click empty stage space to drop the selected shape at that location.
+- Clear the live bodies with **Clear field** or press `C`; the active scene's obstacles remain in place.
 - Drag any body on the stage to throw it through the field.
 - Click an object in the manifest to inspect it; use `×` to remove the selection.
 - Press `Space` to pause/resume and `R` to reset the active scene.

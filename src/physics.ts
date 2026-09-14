@@ -498,9 +498,18 @@ export class SoftBodyEngine {
   }
 
   getBodySpeed(body: SoftBody): number {
-    let speed = 0;
-    for (const point of body.points) speed += Math.hypot(point.x - point.oldX, point.y - point.oldY);
-    return (speed / body.points.length) * 60;
+    const velocity = this.getBodyVelocity(body);
+    return Math.hypot(velocity.x, velocity.y);
+  }
+
+  getBodyVelocity(body: SoftBody): { x: number; y: number } {
+    let x = 0;
+    let y = 0;
+    for (const point of body.points) {
+      x += point.x - point.oldX;
+      y += point.y - point.oldY;
+    }
+    return { x: (x / body.points.length) * 60, y: (y / body.points.length) * 60 };
   }
 
   getBodyCompression(body: SoftBody): number {

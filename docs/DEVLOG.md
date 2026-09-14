@@ -61,3 +61,7 @@ Capsules join the cube, blob, pillow, and orb profiles as a fifth spawnable body
 ## 14 — Making placement quicker
 
 Double-clicking empty stage space now drops the selected shape into the field with a small launch impulse. The shortcut dialog documents the gesture alongside the existing keyboard controls, making it possible to build a test cluster without repeatedly returning to the control deck.
+
+## 15 — Faster experiments, clearer motion
+
+The control deck now has a **Clear field** action and `C` shortcut that removes live bodies while preserving the current scene's obstacle layout. The selected body also gets a restrained velocity arrow when it is moving, connecting the inspector's speed readout to a visual cue without turning every object into a debug overlay.
