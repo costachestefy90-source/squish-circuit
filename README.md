@@ -12,19 +12,21 @@ The same exported frame is also kept as a compact JPEG at [`docs/squish-circuit-
 
 - A responsive three-panel interface with a canvas stage, material controls, world controls, and a live object inspector.
 - Five spawnable body profiles: cube, blob, pillow, orb, and a directional capsule.
-- Eight ready-to-play scenes: Jelly cubes, Bouncing blobs, Low gravity, Heavy gravity, Obstacle course, Squish test, Slow motion, and Wind tunnel.
+- Nine ready-to-play scenes: Jelly cubes, Bouncing blobs, Low gravity, Heavy gravity, Obstacle course, Squish test, Slow motion, Wind tunnel, and Orbit lab.
 - Verlet integration with structural, bend, and cross-body spring links.
 - Area preservation for internal pressure, edge collisions, obstacle collisions, soft-body overlap resolution, friction, and restitution.
 - Pointer drag-to-throw interaction, double-click drop spawning, body selection, pause/reset, spring-guide visualization, keyboard shortcuts, accessible preset/shape state, and live energy/FPS/object metrics.
 - A signed wind-current control renders an arrow field and pushes every particle, while the selected-body inspector reports area, speed, compression, and spring load.
+- A signed vortex-field control adds a visible orbit study, with the ninth Orbit lab scene and a restrained ring of directional flow lines.
 - A **SAVE PNG** action for downloading the current rendered field as a clean project snapshot.
+- Pin the selected body with `F` to build stable experiments, or use **Remix field** / `M` to generate a fresh five-body arrangement without changing the active obstacles.
 - No backend, database, API key, or runtime service. The built site is deployable as static files.
 
 ## Physics approach
 
 Each body is a ring of particles connected by a spring network. Every frame, the solver performs a small fixed number of Verlet passes:
 
-1. Integrate particle positions from their current and previous positions, gravity, wind, and the active time scale.
+1. Integrate particle positions from their current and previous positions, gravity, wind, the signed vortex field, and the active time scale.
 2. Relax structural edge springs, longer bend springs, and cross-body links.
 3. Compare the current polygon area with the body's rest area and distribute an area-pressure correction around the ring.
 4. Resolve arena bounds, static obstacle rectangles, and pairwise body overlap.
@@ -38,17 +40,20 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Choose a spawn shape and click **Spawn soft body**, or press `B`.
 - Double-click empty stage space to drop the selected shape at that location.
 - Clear the live bodies with **Clear field** or press `C`; the active scene's obstacles remain in place.
+- Use **Remix field** or press `M` to clear and repopulate the scene with a fresh, varied cluster while keeping its obstacles and world settings.
 - Duplicate the selected body with `D` or the `＋` action in the inspector, preserving its shape and current motion.
+- Pin or unpin the selected body with `F` or the inspector action; pinned bodies hold their exact shape and position while the rest of the field continues moving.
 - Drag any body on the stage to throw it through the field.
 - The selected body leaves a short motion trail while it travels, with a velocity arrow for its current direction.
 - Click an object in the manifest to inspect it; use `×` to remove the selection.
 - Press `Space` to pause/resume and `R` to reset the active scene.
 - Toggle **Spring guides** to reveal the live network links, or press `G`.
+- Tune signed wind and vortex fields independently; positive and negative values show opposite flow directions on the canvas.
 - Open the keyboard reference with the `?` button or the `?` key.
 - Focus the stage to use keyboard shortcuts without leaving the canvas.
 - Tune the material and world sliders—including signed wind current and time scale—while the solver is running.
 
-On narrow screens, the world-field controls remain available below the material lab so gravity, wind, friction, and restitution are still adjustable on touch devices.
+On narrow screens, the world-field controls remain available below the material lab so gravity, wind, vortex, friction, and restitution are still adjustable on touch devices.
 
 ## Development
 

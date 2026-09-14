@@ -80,6 +80,9 @@
               <button class="preset-button" type="button" data-preset="wind-tunnel" aria-pressed="false">
                 <span class="preset-number">08</span><span><strong>Wind tunnel</strong><small>steer the current</small></span>
               </button>
+              <button class="preset-button" type="button" data-preset="orbit-lab" aria-pressed="false">
+                <span class="preset-number">09</span><span><strong>Orbit lab</strong><small>follow the vortex</small></span>
+              </button>
             </div>
           </section>
 
@@ -96,7 +99,8 @@
               <button class="shape-button" type="button" data-shape="capsule" aria-pressed="false"><span class="shape-swatch capsule-swatch" aria-hidden="true"></span><span>Capsule</span></button>
             </div>
             <button id="spawn-button" class="primary-button" type="button"><span>＋</span> Spawn soft body <kbd>B</kbd></button>
-            <div class="spawn-meta"><button id="clear-button" class="secondary-button" type="button"><span>×</span> Clear field <kbd>C</kbd></button><span>keeps obstacles</span></div>
+            <div class="spawn-meta"><button id="clear-button" class="secondary-button" type="button"><span>×</span> Clear field <kbd>C</kbd></button><button id="remix-button" class="secondary-button remix-button" type="button"><span>↻</span> Remix field <kbd>M</kbd></button></div>
+            <div class="spawn-note">clear keeps obstacles · remix builds a fresh cluster</div>
           </section>
 
           <section class="control-section sliders-section">
@@ -133,7 +137,11 @@
             </label>
             <label class="slider-control" for="wind-range">
               <span class="slider-label"><span>Wind current</span><output id="wind-output">0%</output></span>
-              <input id="wind-range" data-setting="wind" type="range" min="0" max="200" value="100" />
+              <input id="wind-range" data-setting="wind" type="range" min="0" max="100" value="50" />
+            </label>
+            <label class="slider-control" for="vortex-range">
+              <span class="slider-label"><span>Vortex field</span><output id="vortex-output">0%</output></span>
+              <input id="vortex-range" data-setting="vortex" type="range" min="0" max="100" value="50" />
             </label>
             <label class="slider-control" for="friction-range">
               <span class="slider-label"><span>Surface friction</span><output id="friction-output">72%</output></span>
@@ -155,8 +163,10 @@
             <span class="key-hint"><kbd>B</kbd> spawn</span>
             <span class="key-hint"><kbd>C</kbd> clear</span>
             <span class="key-hint"><kbd>D</kbd> duplicate</span>
+            <span class="key-hint"><kbd>F</kbd> pin</span>
+            <span class="key-hint"><kbd>M</kbd> remix</span>
             <span class="key-hint"><kbd>G</kbd> guides</span>
-            <span class="key-hint"><kbd>1—8</kbd> scenes</span>
+            <span class="key-hint"><kbd>1—9</kbd> scenes</span>
           </div>
         </aside>
 
@@ -210,6 +220,7 @@
               <div><span>COMPRESSION</span><strong id="selected-compression">—</strong></div>
               <div><span>SPRING LOAD</span><strong id="selected-load">—</strong></div>
             </div>
+            <button id="freeze-button" class="inspector-action" type="button" aria-pressed="false" aria-label="Pin selected body (F)" title="Pin selected body (F)"><span class="inspector-action-icon" aria-hidden="true">◇</span><span id="freeze-label">PIN BODY</span><kbd>F</kbd></button>
             <div class="material-bar"><span>SHAPE MEMORY</span><div><i id="memory-meter"></i></div><strong id="memory-readout">—</strong></div>
             <p id="selected-copy" class="selected-copy">—</p>
           </div>
@@ -226,8 +237,10 @@
           <div><kbd>C</kbd><span>Clear all bodies and keep the active scene obstacles</span></div>
           <div><kbd>D</kbd><span>Duplicate the selected body and keep its motion</span></div>
           <div><kbd>G</kbd><span>Toggle spring guides</span></div>
-          <div><kbd>1—8</kbd><span>Load a scene preset</span></div>
+          <div><kbd>1—9</kbd><span>Load a scene preset</span></div>
           <div><kbd>2×</kbd><span>Double-click empty space to drop the selected shape</span></div>
+          <div><kbd>F</kbd><span>Pin or unpin the selected body</span></div>
+          <div><kbd>M</kbd><span>Remix the live bodies into a fresh cluster</span></div>
           <div><span class="shortcut-pointer" aria-hidden="true">↗</span><span>Drag a body to throw it</span></div>
         </div>
         <form method="dialog"><button class="dialog-close" type="submit">Close</button></form>

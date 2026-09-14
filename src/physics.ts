@@ -7,7 +7,8 @@ export type PresetId =
   | 'obstacle-course'
   | 'squish-test'
   | 'slow-motion'
-  | 'wind-tunnel';
+  | 'wind-tunnel'
+  | 'orbit-lab';
 
 export interface PhysicsSettings {
   softness: number;
@@ -19,6 +20,7 @@ export interface PhysicsSettings {
   springStrength: number;
   timeScale: number;
   wind: number;
+  vortex: number;
 }
 
 export interface BodySeed {
@@ -76,6 +78,7 @@ export interface SoftBody {
   radius: number;
   phase: number;
   dragging: boolean;
+  frozen: boolean;
   dragVelocity: { x: number; y: number };
   __dragX?: number;
   __dragY?: number;
@@ -102,6 +105,7 @@ export const DEFAULT_SETTINGS: PhysicsSettings = {
   springStrength: 0.56,
   timeScale: 1,
   wind: 0,
+  vortex: 0,
 };
 
 export const PALETTE = [
@@ -250,6 +254,23 @@ export const PRESETS: PresetDefinition[] = [
       { x: 0.75, y: 0.59, w: 0.025, h: 0.15, label: 'VANE C', tone: 'mint' },
     ],
   },
+  {
+    id: 'orbit-lab',
+    name: 'Orbit lab',
+    kicker: 'SCENE / ORBIT LAB',
+    description: 'A slow-turning vortex for studying drift, lift, and soft-body orbit lines.',
+    settings: { softness: 0.64, pressure: 0.82, gravity: 0.16, vortex: 0.82, restitution: 0.5, friction: 0.38, timeScale: 1 },
+    bodies: [
+      { shape: 'orb', x: 0.19, y: 0.22, size: 0.068 },
+      { shape: 'capsule', x: 0.39, y: 0.15, size: 0.086, rotation: 0.18 },
+      { shape: 'blob', x: 0.66, y: 0.2, size: 0.078 },
+      { shape: 'pillow', x: 0.78, y: 0.43, size: 0.073, rotation: -0.2 },
+    ],
+    obstacles: [
+      { x: 0.07, y: 0.82, w: 0.86, h: 0.035, label: 'ORBIT DECK', tone: 'lilac' },
+      { x: 0.47, y: 0.43, w: 0.06, h: 0.035, label: 'CORE', tone: 'orange' },
+    ],
+  },
 ];
 
 function clamp(value: number, min: number, max: number): number {
@@ -375,6 +396,15 @@ export class SoftBodyEngine {
     this.bodies = [];
   }
 
+  setFrozen(body: SoftBody, frozen = !body.frozen): void {
+    body.frozen = frozen;
+    body.dragVelocity = { x: 0, y: 0 };
+    for (const point of body.points) {
+      point.oldX = point.x;
+      point.oldY = point.y;
+    }
+  }
+
   spawn(shape: SoftBodyShape, x = this.width * 0.5, y = this.height * 0.16): SoftBody {
     const size = 0.07 + ((this.nextId * 13) % 17) / 260;
     const seed: BodySeed = {
@@ -411,6 +441,7 @@ export class SoftBodyEngine {
       point.oldX = point.x - velocity.x / 60;
       point.oldY = point.y - velocity.y / 60;
     }
+    clone.frozen = body.frozen;
     this.bodies.push(clone);
     return clone;
   }
@@ -455,8 +486,8 @@ export class SoftBodyEngine {
   endDrag(body: SoftBody): void {
     body.dragging = false;
     for (const point of body.points) {
-      point.oldX = point.x - body.dragVelocity.x * 1.8;
-      point.oldY = point.y - body.dragVelocity.y * 1.8;
+      point.oldX = body.frozen ? point.x : point.x - body.dragVelocity.x * 1.8;
+      point.oldY = body.frozen ? point.y : point.y - body.dragVelocity.y * 1.8;
     }
     body.__dragX = undefined;
     body.__dragY = undefined;
@@ -469,23 +500,35 @@ export class SoftBodyEngine {
     const damping = 0.88 + this.settings.damping * 0.115;
     const acceleration = 980 * this.settings.gravity;
     const windAcceleration = 900 * this.settings.wind;
+    const vortexStrength = 2.1 * this.settings.vortex;
+    const vortexCenterX = this.width * 0.5;
+    const vortexCenterY = this.height * 0.43;
 
     for (const body of this.bodies) {
-      if (body.dragging) continue;
+      if (body.dragging || body.frozen) continue;
       for (const point of body.points) {
         const velocityX = (point.x - point.oldX) * damping;
         const velocityY = (point.y - point.oldY) * damping;
+        const offsetX = point.x - vortexCenterX;
+        const offsetY = point.y - vortexCenterY;
+        const vortexX = -offsetY * vortexStrength;
+        const vortexY = offsetX * vortexStrength;
         point.oldX = point.x;
         point.oldY = point.y;
-        point.x += velocityX + windAcceleration * seconds * seconds;
-        point.y += velocityY + acceleration * seconds * seconds;
+        point.x += velocityX + (windAcceleration + vortexX) * seconds * seconds;
+        point.y += velocityY + (acceleration + vortexY) * seconds * seconds;
       }
     }
 
     for (let pass = 0; pass < 4; pass += 1) {
-      for (const body of this.bodies) this.solveSprings(body);
-      for (const body of this.bodies) this.solveArea(body);
       for (const body of this.bodies) {
+        if (!body.frozen || body.dragging) this.solveSprings(body);
+      }
+      for (const body of this.bodies) {
+        if (!body.frozen || body.dragging) this.solveArea(body);
+      }
+      for (const body of this.bodies) {
+        if (body.frozen && !body.dragging) continue;
         this.solveBounds(body);
         this.solveObstacles(body);
       }
@@ -505,8 +548,9 @@ export class SoftBodyEngine {
     return Math.min(99.99, energy / 1300);
   }
 
-  getBodyState(body: SoftBody): 'DRAGGING' | 'AIRBORNE' | 'RESTING' {
+  getBodyState(body: SoftBody): 'DRAGGING' | 'FROZEN' | 'AIRBORNE' | 'RESTING' {
     if (body.dragging) return 'DRAGGING';
+    if (body.frozen) return 'FROZEN';
     const center = bodyCenter(body);
     const nearSurface = center.y + body.radius > this.height - 42;
     let velocity = 0;
@@ -592,6 +636,7 @@ export class SoftBodyEngine {
       radius,
       phase,
       dragging: false,
+      frozen: false,
       dragVelocity: { x: 0, y: 0 },
     };
     this.nextId += 1;
@@ -709,6 +754,9 @@ export class SoftBodyEngine {
       const a = this.bodies[aIndex];
       for (let bIndex = aIndex + 1; bIndex < this.bodies.length; bIndex += 1) {
         const b = this.bodies[bIndex];
+        const aStatic = a.frozen && !a.dragging;
+        const bStatic = b.frozen && !b.dragging;
+        if (aStatic && bStatic) continue;
         const aCenter = bodyCenter(a);
         const bCenter = bodyCenter(b);
         let dx = bCenter.x - aCenter.x;
@@ -725,8 +773,8 @@ export class SoftBodyEngine {
         const overlap = minimum - length;
         const nx = dx / length;
         const ny = dy / length;
-        if (a.dragging) this.shiftBody(b, nx * overlap, ny * overlap);
-        else if (b.dragging) this.shiftBody(a, -nx * overlap, -ny * overlap);
+        if (a.dragging || aStatic) this.shiftBody(b, nx * overlap, ny * overlap);
+        else if (b.dragging || bStatic) this.shiftBody(a, -nx * overlap, -ny * overlap);
         else {
           this.shiftBody(a, -nx * overlap * 0.5, -ny * overlap * 0.5);
           this.shiftBody(b, nx * overlap * 0.5, ny * overlap * 0.5);

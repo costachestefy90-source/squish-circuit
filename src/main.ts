@@ -49,7 +49,10 @@ const selectedCompression = must<HTMLElement>('selected-compression');
 const selectedLoad = must<HTMLElement>('selected-load');
 const selectedCopy = must<HTMLParagraphElement>('selected-copy');
 const clearButton = must<HTMLButtonElement>('clear-button');
+const remixButton = must<HTMLButtonElement>('remix-button');
 const duplicateButton = must<HTMLButtonElement>('duplicate-button');
+const freezeButton = must<HTMLButtonElement>('freeze-button');
+const freezeLabel = must<HTMLSpanElement>('freeze-label');
 const memoryMeter = must<HTMLElement>('memory-meter');
 const memoryReadout = must<HTMLElement>('memory-readout');
 const energyReadout = must<HTMLElement>('energy-readout');
@@ -69,6 +72,7 @@ const sliderOutputs: Record<string, HTMLOutputElement> = {
   restitution: must<HTMLOutputElement>('restitution-output'),
   timeScale: must<HTMLOutputElement>('timescale-output'),
   wind: must<HTMLOutputElement>('wind-output'),
+  vortex: must<HTMLOutputElement>('vortex-output'),
 };
 
 const sliderInputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[type="range"][data-setting]'));
@@ -79,7 +83,7 @@ function clamp(value: number, min: number, max: number): number {
 
 function formatSetting(setting: keyof PhysicsSettings, value: number): string {
   if (setting === 'gravity') return `${value.toFixed(1)}G`;
-  if (setting === 'wind') {
+  if (setting === 'wind' || setting === 'vortex') {
     if (Math.abs(value) < 0.005) return '0%';
     return `${value > 0 ? '+' : '−'}${Math.round(Math.abs(value) * 100)}%`;
   }
@@ -88,7 +92,7 @@ function formatSetting(setting: keyof PhysicsSettings, value: number): string {
 
 function sliderValueFor(setting: keyof PhysicsSettings, value: number): number {
   if (setting === 'gravity') return Math.round((value / 2) * 100);
-  if (setting === 'wind') return Math.round((value + 1) * 50);
+  if (setting === 'wind' || setting === 'vortex') return Math.round((value + 1) * 50);
   return Math.round(value * 100);
 }
 
@@ -192,7 +196,7 @@ function updateInspector(): void {
   }
   emptyInspector.hidden = true;
   selectedInspector.hidden = false;
-  stageHint.textContent = body.dragging ? 'release to launch' : 'drag to throw';
+  stageHint.textContent = body.dragging ? 'release to launch' : body.frozen ? 'pinned · drag to reposition' : 'drag to throw';
   selectedSwatch.style.background = body.color;
   selectedSwatch.style.boxShadow = `0 0 24px ${body.glow}`;
   selectedName.textContent = body.label;
@@ -206,6 +210,10 @@ function updateInspector(): void {
   const compressionPercent = Math.round(Math.abs(compression) * 100);
   selectedCompression.textContent = compressionPercent === 0 ? '0%' : `${compression > 0 ? '+' : '−'}${compressionPercent}%`;
   selectedLoad.textContent = `${Math.round(engine.getBodySpringLoad(body))}%`;
+  freezeButton.setAttribute('aria-pressed', String(body.frozen));
+  freezeButton.setAttribute('aria-label', body.frozen ? 'Unpin selected body (F)' : 'Pin selected body (F)');
+  freezeButton.title = body.frozen ? 'Unpin selected body (F)' : 'Pin selected body (F)';
+  freezeLabel.textContent = body.frozen ? 'UNPIN BODY' : 'PIN BODY';
   const memory = clamp(100 - engine.settings.softness * 64 + engine.settings.springStrength * 18, 8, 100);
   memoryMeter.style.width = `${memory}%`;
   memoryReadout.textContent = `${Math.round(memory)}%`;
@@ -350,7 +358,53 @@ function drawWindField(width: number, height: number): void {
   ctx.setLineDash([]);
   ctx.font = '700 8px ui-monospace, SFMono-Regular, Menlo, monospace';
   ctx.fillStyle = hexToRgba(color, 0.64);
-  ctx.fillText(`WIND FIELD // ${formatSetting('wind', wind)}`, 22, 36);
+  ctx.fillText(`WIND FIELD // ${formatSetting('wind', wind)}`, 22, 44);
+  ctx.restore();
+}
+
+function drawVortexField(width: number, height: number): void {
+  const vortex = engine.settings.vortex;
+  if (Math.abs(vortex) < 0.03) return;
+  const direction = vortex > 0 ? 1 : -1;
+  const magnitude = Math.abs(vortex);
+  const color = vortex > 0 ? '#c29af5' : '#f7b268';
+  const centerX = width * 0.5;
+  const centerY = height * 0.43;
+  ctx.save();
+  ctx.strokeStyle = hexToRgba(color, 0.1 + magnitude * 0.1);
+  ctx.fillStyle = hexToRgba(color, 0.2 + magnitude * 0.12);
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 8]);
+  const maxRadius = Math.min(width, height) * 0.46;
+  for (let radius = 58; radius < maxRadius; radius += 68) {
+    const start = direction > 0 ? -0.8 : 0.8;
+    const end = direction > 0 ? Math.PI * 1.35 : -Math.PI * 1.35;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, start, end, direction < 0);
+    ctx.stroke();
+    const angle = direction > 0 ? 0.15 : -0.15;
+    const arrowX = centerX + Math.cos(angle) * radius;
+    const arrowY = centerY + Math.sin(angle) * radius;
+    const tangentX = -Math.sin(angle) * direction;
+    const tangentY = Math.cos(angle) * direction;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(arrowX, arrowY);
+    ctx.lineTo(arrowX - tangentX * 6 - tangentY * 3, arrowY - tangentY * 6 + tangentX * 3);
+    ctx.lineTo(arrowX - tangentX * 6 + tangentY * 3, arrowY - tangentY * 6 - tangentX * 3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.setLineDash([3, 8]);
+  }
+  ctx.setLineDash([]);
+  ctx.strokeStyle = hexToRgba(color, 0.3);
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 5 + magnitude * 7, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.font = '700 8px ui-monospace, SFMono-Regular, Menlo, monospace';
+  ctx.fillStyle = hexToRgba(color, 0.64);
+  const labelY = Math.abs(engine.settings.wind) > 0.03 ? 66 : 44;
+  ctx.fillText(`VORTEX FIELD // ${formatSetting('vortex', vortex)}`, 22, labelY);
   ctx.restore();
 }
 
@@ -487,6 +541,27 @@ function drawBody(body: SoftBody): void {
       ctx.fill();
     }
   }
+  if (body.frozen) {
+    const badgeX = center.x + body.radius * 0.74;
+    const badgeY = center.y - body.radius * 0.74;
+    ctx.save();
+    ctx.fillStyle = hexToRgba('#10172b', 0.86);
+    ctx.strokeStyle = hexToRgba(body.accent, 0.78);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(badgeX, badgeY, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = body.accent;
+    ctx.beginPath();
+    ctx.moveTo(badgeX, badgeY - 3.5);
+    ctx.lineTo(badgeX + 3.5, badgeY);
+    ctx.lineTo(badgeX, badgeY + 3.5);
+    ctx.lineTo(badgeX - 3.5, badgeY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
   ctx.restore();
 }
 
@@ -509,6 +584,7 @@ function drawScene(): void {
   drawGrid(width, height);
   drawCornerMarks(width, height);
   drawWindField(width, height);
+  drawVortexField(width, height);
   for (const obstacle of engine.obstacles) drawObstacle(obstacle);
   for (const body of engine.bodies) drawBody(body);
   ctx.save();
@@ -516,7 +592,7 @@ function drawScene(): void {
   ctx.font = '700 8px ui-monospace, SFMono-Regular, Menlo, monospace';
   ctx.fillText('CONTACT FIELD // ACTIVE', 22, height - 29);
   ctx.fillStyle = 'rgba(222, 232, 255, .22)';
-  ctx.fillText(`PASS 04 · ${engine.bodies.length} RINGS`, width - 108, height - 29);
+  ctx.fillText(`PASS 05 · ${String(engine.bodies.length).padStart(2, '0')} RINGS`, width - 124, height - 29);
   ctx.restore();
 }
 
@@ -532,6 +608,44 @@ function spawnSelectedShape(): void {
     point.oldY = point.y + 0.6;
   }
   setSelectedBody(body.id);
+}
+
+let remixCount = 0;
+
+function remixField(): void {
+  engine.clear();
+  bodyTrails.clear();
+  remixCount += 1;
+  const shapes: SoftBodyShape[] = ['cube', 'blob', 'pillow', 'orb', 'capsule'];
+  let lastBody: SoftBody | undefined;
+  for (let index = 0; index < 5; index += 1) {
+    const shape = shapes[(index * 2 + remixCount) % shapes.length];
+    const x = engine.width * (0.16 + (((index * 23 + remixCount * 17) % 68) / 100));
+    const y = engine.height * (0.12 + (((index * 31 + remixCount * 13) % 32) / 100));
+    const body = engine.spawn(shape, x, y);
+    const launchX = (((index + remixCount) % 3) - 1) * 1.25;
+    const launchY = (index % 2 === 0 ? 0.35 : -0.25);
+    for (const point of body.points) {
+      point.oldX = point.x - launchX;
+      point.oldY = point.y - launchY;
+    }
+    lastBody = body;
+  }
+  setSelectedBody(lastBody?.id ?? null);
+}
+
+function clearField(): void {
+  engine.clear();
+  bodyTrails.clear();
+  setSelectedBody(null);
+}
+
+function toggleSelectedFreeze(): void {
+  const body = selectedBody();
+  if (!body) return;
+  engine.setFrozen(body);
+  renderObjectList();
+  updateInspector();
 }
 
 function updateMotionTrails(): void {
@@ -598,10 +712,9 @@ exportButton.addEventListener('click', () => {
 });
 must<HTMLButtonElement>('reset-button').addEventListener('click', () => loadPreset(engine.currentPreset.id));
 clearButton.addEventListener('click', () => {
-  engine.clear();
-  bodyTrails.clear();
-  setSelectedBody(null);
+  clearField();
 });
+remixButton.addEventListener('click', remixField);
 must<HTMLButtonElement>('remove-button').addEventListener('click', () => {
   if (selectedBodyId === null) return;
   bodyTrails.delete(selectedBodyId);
@@ -614,6 +727,7 @@ duplicateButton.addEventListener('click', () => {
   const clone = engine.duplicate(body);
   setSelectedBody(clone.id);
 });
+freezeButton.addEventListener('click', toggleSelectedFreeze);
 must<HTMLButtonElement>('defaults-button').addEventListener('click', () => {
   engine.settings = { ...DEFAULT_SETTINGS };
   syncControls();
@@ -632,7 +746,7 @@ for (const input of sliderInputs) {
   input.addEventListener('input', () => {
     const setting = input.dataset.setting as keyof PhysicsSettings;
     const rawValue = Number(input.value) / 100;
-    engine.settings[setting] = setting === 'gravity' ? rawValue * 2 : setting === 'wind' ? rawValue * 2 - 1 : rawValue;
+    engine.settings[setting] = setting === 'gravity' ? rawValue * 2 : setting === 'wind' || setting === 'vortex' ? rawValue * 2 - 1 : rawValue;
     input.style.setProperty('--value', `${input.value}%`);
     const output = sliderOutputs[setting];
     const formattedValue = formatSetting(setting, engine.settings[setting]);
@@ -695,12 +809,15 @@ window.addEventListener('keydown', (event) => {
     guidesToggle.checked = !guidesToggle.checked;
     showGuides = guidesToggle.checked;
   } else if (event.key.toLowerCase() === 'c') {
-    engine.clear();
-    setSelectedBody(null);
+    clearField();
   } else if (event.key.toLowerCase() === 'd') {
     const body = selectedBody();
     if (body) setSelectedBody(engine.duplicate(body).id);
-  } else if (/^[1-8]$/.test(event.key)) {
+  } else if (event.key.toLowerCase() === 'f') {
+    toggleSelectedFreeze();
+  } else if (event.key.toLowerCase() === 'm') {
+    remixField();
+  } else if (/^[1-9]$/.test(event.key)) {
     loadPreset(PRESETS[Number(event.key) - 1].id);
   }
 });

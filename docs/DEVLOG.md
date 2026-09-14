@@ -85,3 +85,19 @@ The slider controls now publish their formatted values to assistive technology a
 ## 20 — Remembering the path
 
 The selected body now leaves a short, fading motion trail as it travels through the stage, paired with the live velocity arrow. It adds just enough history to read a wind-driven route while keeping the other bodies clean and the exported frame uncluttered.
+
+## 21 — Letting the field turn
+
+The world model now includes a signed vortex field alongside wind. It applies a tangential acceleration around the stage core and renders restrained orbit arcs with directional markers, making rotational motion visible instead of leaving it as an invisible force. The new Orbit lab preset gives the field a low-gravity study scene with an orbit deck and a small core obstacle.
+
+## 22 — Building a stable experiment
+
+The selected-body inspector now has a pin action, with `F` as its keyboard shortcut. A pinned body holds its particle positions and zeroes its velocity while the rest of the field continues to simulate; dragging still lets the user reposition it, and the manifest reports the explicit **FROZEN** state. The pin marker is also drawn on the body so the state remains legible on the canvas.
+
+## 23 — Remixing without rebuilding
+
+The control deck now has a **Remix field** action and `M` shortcut. It clears only the live bodies, then repopulates the current scene with a fresh five-body arrangement using the available profiles and small launch variations. Obstacles and world settings stay intact, so remixing is a quick way to explore a scene rather than a hidden reset.
+
+## 24 — Correcting signed controls
+
+The wind and vortex sliders now use a true 0–100 centered range, matching their signed values and the visual midpoint marker. This removes an edge case where the internal normalized mapping could be pushed beyond the intended −100% to +100% field range.
