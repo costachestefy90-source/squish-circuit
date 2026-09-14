@@ -28,6 +28,7 @@
           <span id="clock-readout">00:00:00</span>
         </div>
         <div class="topbar-actions">
+          <button id="shortcuts-button" class="icon-button shortcuts-button" type="button" aria-label="Show keyboard shortcuts" title="Show keyboard shortcuts (?)">?</button>
           <button id="pause-button" class="icon-button" type="button" aria-pressed="false" title="Pause simulation (Space)">
             <span class="pause-icon" aria-hidden="true"></span>
             <span class="sr-only">Pause simulation</span>
@@ -197,6 +198,18 @@
         </aside>
       </main>
       <footer class="app-footer"><span>STARDANCE / SOFT BODY PHYSICS PLAYGROUND</span><span>NO BACKEND · LOCAL SIMULATION · STATIC READY</span></footer>
+      <dialog id="shortcuts-dialog" class="shortcuts-dialog" aria-labelledby="shortcuts-title">
+        <div class="dialog-heading"><div><span class="eyebrow">QUICK REFERENCE</span><h2 id="shortcuts-title">Keyboard controls.</h2></div><span class="panel-index">?</span></div>
+        <div class="shortcut-list">
+          <div><kbd>SPACE</kbd><span>Pause or resume the simulation</span></div>
+          <div><kbd>R</kbd><span>Reset the active scene</span></div>
+          <div><kbd>B</kbd><span>Spawn the selected soft body</span></div>
+          <div><kbd>G</kbd><span>Toggle spring guides</span></div>
+          <div><kbd>1—7</kbd><span>Load a scene preset</span></div>
+          <div><span class="shortcut-pointer" aria-hidden="true">↗</span><span>Drag a body to throw it</span></div>
+        </div>
+        <form method="dialog"><button class="dialog-close" type="submit">Close</button></form>
+      </dialog>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

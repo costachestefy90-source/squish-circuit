@@ -39,6 +39,7 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Click an object in the manifest to inspect it; use `×` to remove the selection.
 - Press `Space` to pause/resume and `R` to reset the active scene.
 - Toggle **Spring guides** to reveal the live network links, or press `G`.
+- Open the keyboard reference with the `?` button or the `?` key.
 - Tune the material and world sliders while the solver is running.
 
 On narrow screens, the world-field controls remain available below the material lab so gravity, friction, and restitution are still adjustable on touch devices.

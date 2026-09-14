@@ -33,3 +33,7 @@ The next polish pass made the scene and shape choices expose their selected stat
 ## 07 — Keeping the lab usable on small screens
 
 The mobile layout now keeps the world-field sliders visible instead of hiding gravity, friction, and restitution behind the desktop-only layout. Range controls also get a larger touch target at the phone breakpoint, so the material lab and world field remain part of the same playable sandbox on narrow screens.
+
+## 08 — Making the controls teach themselves
+
+The final interface pass added a keyboard-reference dialog that can be opened from the `?` button or keyboard, with short descriptions for pause, reset, spawning, guides, scene presets, and drag throwing. It keeps the control deck approachable without adding another persistent panel to the playground.

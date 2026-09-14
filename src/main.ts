@@ -27,6 +27,8 @@ const sceneKicker = must<HTMLSpanElement>('scene-kicker');
 const sceneDescription = must<HTMLSpanElement>('scene-description');
 const selectedShapeNote = must<HTMLSpanElement>('selected-shape-note');
 const simStatus = must<HTMLSpanElement>('sim-status');
+const shortcutsButton = must<HTMLButtonElement>('shortcuts-button');
+const shortcutsDialog = must<HTMLDialogElement>('shortcuts-dialog');
 const pauseButton = must<HTMLButtonElement>('pause-button');
 const exportButton = must<HTMLButtonElement>('export-button');
 const exportStatus = must<HTMLSpanElement>('export-status');
@@ -425,6 +427,10 @@ document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) =
   button.addEventListener('click', () => loadPreset(button.dataset.preset as PresetId));
 });
 
+shortcutsButton.addEventListener('click', () => {
+  if (!shortcutsDialog.open) shortcutsDialog.showModal();
+});
+
 document.querySelectorAll<HTMLButtonElement>('[data-shape]').forEach((button) => {
   button.addEventListener('click', () => {
     selectedShape = button.dataset.shape as SoftBodyShape;
@@ -520,7 +526,10 @@ canvas.addEventListener('pointercancel', releasePointer);
 window.addEventListener('keydown', (event) => {
   const target = event.target as HTMLElement | null;
   if (target?.matches('input, textarea, select, button')) return;
-  if (event.code === 'Space') {
+  if (event.key === '?' && !shortcutsDialog.open) {
+    event.preventDefault();
+    shortcutsDialog.showModal();
+  } else if (event.code === 'Space') {
     event.preventDefault();
     engine.paused = !engine.paused;
     updatePauseState();
