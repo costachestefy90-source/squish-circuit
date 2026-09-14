@@ -29,3 +29,7 @@ After the first live pass, I tightened two details that matter during repeated t
 ## 06 — Making feedback legible
 
 The next polish pass made the scene and shape choices expose their selected state to assistive technology, added a small export-status readout for the **SAVE PNG** action, and kept the live slider track fill synchronized with each control. These changes preserve the compact visual system while making repeated exploration easier to understand.
+
+## 07 — Keeping the lab usable on small screens
+
+The mobile layout now keeps the world-field sliders visible instead of hiding gravity, friction, and restitution behind the desktop-only layout. Range controls also get a larger touch target at the phone breakpoint, so the material lab and world field remain part of the same playable sandbox on narrow screens.

@@ -41,6 +41,8 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Toggle **Spring guides** to reveal the live network links, or press `G`.
 - Tune the material and world sliders while the solver is running.
 
+On narrow screens, the world-field controls remain available below the material lab so gravity, friction, and restitution are still adjustable on touch devices.
+
 ## Development
 
 This project uses Vite, TypeScript, and the browser Canvas 2D API. There are no framework or service requirements.
