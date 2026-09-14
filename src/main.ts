@@ -22,6 +22,7 @@ let lastFrame = performance.now();
 let lastListRender = 0;
 let elapsedSeconds = 0;
 let fps = 60;
+const bodyTrails = new Map<number, Array<{ x: number; y: number }>>();
 
 const sceneKicker = must<HTMLSpanElement>('scene-kicker');
 const sceneDescription = must<HTMLSpanElement>('scene-description');
@@ -140,6 +141,7 @@ function updateSceneLabels(): void {
 
 function loadPreset(id: PresetId): void {
   engine.loadPreset(id);
+  bodyTrails.clear();
   selectedBodyId = engine.bodies[0]?.id ?? null;
   syncControls();
   updateSceneLabels();
@@ -387,6 +389,31 @@ function drawObstacle(obstacle: Obstacle): void {
 
 function drawBody(body: SoftBody): void {
   const center = engine.getBodyCenter(body);
+  if (body.id === selectedBodyId) {
+    const trail = bodyTrails.get(body.id);
+    if (trail && trail.length > 1) {
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 2;
+      for (let index = 1; index < trail.length; index += 1) {
+        const previous = trail[index - 1];
+        const current = trail[index];
+        ctx.strokeStyle = hexToRgba(body.color, (index / trail.length) * 0.24);
+        ctx.beginPath();
+        ctx.moveTo(previous.x, previous.y);
+        ctx.lineTo(current.x, current.y);
+        ctx.stroke();
+      }
+      ctx.fillStyle = hexToRgba(body.accent, 0.5);
+      for (let index = 1; index < trail.length; index += 4) {
+        const point = trail[index];
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 1.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
   drawHull(body);
   const gradient = ctx.createRadialGradient(center.x - body.radius * 0.32, center.y - body.radius * 0.42, 2, center.x, center.y, body.radius * 1.35);
   gradient.addColorStop(0, body.accent);
@@ -507,6 +534,24 @@ function spawnSelectedShape(): void {
   setSelectedBody(body.id);
 }
 
+function updateMotionTrails(): void {
+  const activeIds = new Set<number>();
+  for (const body of engine.bodies) {
+    activeIds.add(body.id);
+    const center = engine.getBodyCenter(body);
+    const trail = bodyTrails.get(body.id) ?? [];
+    const last = trail[trail.length - 1];
+    if (!last || Math.hypot(center.x - last.x, center.y - last.y) > 1.2) {
+      trail.push({ ...center });
+      if (trail.length > 22) trail.shift();
+    }
+    bodyTrails.set(body.id, trail);
+  }
+  for (const id of bodyTrails.keys()) {
+    if (!activeIds.has(id)) bodyTrails.delete(id);
+  }
+}
+
 canvas.addEventListener('dblclick', (event) => {
   const pointer = pointerPosition(event);
   if (engine.hitTest(pointer.x, pointer.y)) return;
@@ -554,10 +599,12 @@ exportButton.addEventListener('click', () => {
 must<HTMLButtonElement>('reset-button').addEventListener('click', () => loadPreset(engine.currentPreset.id));
 clearButton.addEventListener('click', () => {
   engine.clear();
+  bodyTrails.clear();
   setSelectedBody(null);
 });
 must<HTMLButtonElement>('remove-button').addEventListener('click', () => {
   if (selectedBodyId === null) return;
+  bodyTrails.delete(selectedBodyId);
   engine.removeBody(selectedBodyId);
   setSelectedBody(engine.bodies[0]?.id ?? null);
 });
@@ -681,6 +728,7 @@ function tick(now: number): void {
   elapsedSeconds += delta;
   fps = fps * 0.92 + (1 / delta) * 0.08;
   engine.step(delta);
+  updateMotionTrails();
   drawScene();
   energyReadout.textContent = engine.getEnergy().toFixed(2);
   objectReadout.textContent = String(engine.bodies.length).padStart(2, '0');

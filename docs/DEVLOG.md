@@ -81,3 +81,7 @@ Time scale is now exposed as a world-field slider from 10% to 100%. The existing
 ## 19 — Speaking in the same units
 
 The slider controls now publish their formatted values to assistive technology as well as the visible outputs. Signed wind values, gravity in G, and time scale percentages are no longer exposed only as the internal range positions.
+
+## 20 — Remembering the path
+
+The selected body now leaves a short, fading motion trail as it travels through the stage, paired with the live velocity arrow. It adds just enough history to read a wind-driven route while keeping the other bodies clean and the exported frame uncluttered.

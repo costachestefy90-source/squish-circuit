@@ -40,6 +40,7 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Clear the live bodies with **Clear field** or press `C`; the active scene's obstacles remain in place.
 - Duplicate the selected body with `D` or the `＋` action in the inspector, preserving its shape and current motion.
 - Drag any body on the stage to throw it through the field.
+- The selected body leaves a short motion trail while it travels, with a velocity arrow for its current direction.
 - Click an object in the manifest to inspect it; use `×` to remove the selection.
 - Press `Space` to pause/resume and `R` to reset the active scene.
 - Toggle **Spring guides** to reveal the live network links, or press `G`.
