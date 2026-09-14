@@ -150,6 +150,7 @@
             <span class="key-hint"><kbd>R</kbd> reset</span>
             <span class="key-hint"><kbd>B</kbd> spawn</span>
             <span class="key-hint"><kbd>C</kbd> clear</span>
+            <span class="key-hint"><kbd>D</kbd> duplicate</span>
             <span class="key-hint"><kbd>G</kbd> guides</span>
             <span class="key-hint"><kbd>1—8</kbd> scenes</span>
           </div>
@@ -166,7 +167,7 @@
             </div>
           </div>
           <div id="stage-wrap" class="stage-wrap">
-            <canvas id="physics-canvas" aria-label="Interactive soft body physics canvas. Drag a shape to throw it around the scene."></canvas>
+            <canvas id="physics-canvas" tabindex="0" aria-label="Interactive soft body physics canvas. Drag a shape to throw it around the scene. Use keyboard shortcuts while this stage is focused."></canvas>
             <div class="stage-overlay stage-overlay-top"><span id="scene-description">A calm stack for tuning shape memory.</span><span class="drag-tip"><span class="mouse-icon" aria-hidden="true"></span> DRAG TO THROW · 2× DROP</span></div>
             <div class="stage-overlay stage-overlay-bottom"><span><i class="legend-dot mint"></i>SOFT BODY</span><span><i class="legend-line"></i>COLLISION FIELD</span><span id="stage-hint">tap a body to inspect</span></div>
             <div class="paused-badge" id="paused-badge" hidden><span class="paused-bars" aria-hidden="true"></span> SIMULATION PAUSED</div>
@@ -194,7 +195,7 @@
             <span>Inspect its material signature and drag it through the field.</span>
           </div>
           <div id="selected-inspector" class="selected-inspector" hidden>
-            <div class="selected-object-header"><span id="selected-swatch" class="selected-swatch"></span><div><span class="eyebrow">SELECTED BODY</span><h3 id="selected-name">—</h3></div><button id="remove-button" class="remove-button" type="button" title="Remove selected body">×</button></div>
+            <div class="selected-object-header"><span id="selected-swatch" class="selected-swatch"></span><div><span class="eyebrow">SELECTED BODY</span><h3 id="selected-name">—</h3></div><button id="duplicate-button" class="remove-button duplicate-button" type="button" title="Duplicate selected body (D)">＋</button><button id="remove-button" class="remove-button" type="button" title="Remove selected body">×</button></div>
             <div class="inspector-grid">
               <div><span>TYPE</span><strong id="selected-type">—</strong></div>
               <div><span>SIZE</span><strong id="selected-size">—</strong></div>
@@ -219,6 +220,7 @@
           <div><kbd>R</kbd><span>Reset the active scene</span></div>
           <div><kbd>B</kbd><span>Spawn the selected soft body</span></div>
           <div><kbd>C</kbd><span>Clear all bodies and keep the active scene obstacles</span></div>
+          <div><kbd>D</kbd><span>Duplicate the selected body and keep its motion</span></div>
           <div><kbd>G</kbd><span>Toggle spring guides</span></div>
           <div><kbd>1—8</kbd><span>Load a scene preset</span></div>
           <div><kbd>2×</kbd><span>Double-click empty space to drop the selected shape</span></div>

@@ -389,6 +389,32 @@ export class SoftBodyEngine {
     return body;
   }
 
+  duplicate(body: SoftBody): SoftBody {
+    const center = bodyCenter(body);
+    const direction = center.x < this.width * 0.68 ? 1 : -1;
+    const offsetX = center.x + direction * body.radius * 1.75;
+    const offsetY = center.y - body.radius * 0.55;
+    const firstPoint = body.points[0];
+    const rotation = Math.atan2(firstPoint.y - center.y, firstPoint.x - center.x);
+    const clone = this.createBody(
+      {
+        shape: body.shape,
+        x: clamp(offsetX / this.width, 0.12, 0.88),
+        y: clamp(offsetY / this.height, 0.08, 0.65),
+        size: body.restRadius / Math.min(this.width, this.height),
+        rotation,
+      },
+      this.bodies.length,
+    );
+    const velocity = this.getBodyVelocity(body);
+    for (const point of clone.points) {
+      point.oldX = point.x - velocity.x / 60;
+      point.oldY = point.y - velocity.y / 60;
+    }
+    this.bodies.push(clone);
+    return clone;
+  }
+
   removeBody(id: number): void {
     this.bodies = this.bodies.filter((body) => body.id !== id);
   }

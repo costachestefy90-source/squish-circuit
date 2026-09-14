@@ -215,6 +215,7 @@ input[type='range']::-moz-range-thumb { width: 9px; height: 9px; border: 2px sol
 .stage-wrap { position: relative; flex: 1; min-height: 0; overflow: hidden; background: var(--canvas); }
 .stage-wrap::before { content: ''; position: absolute; z-index: 1; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(7, 10, 20, .02), rgba(7, 10, 20, .16)); }
 #physics-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+#physics-canvas:focus-visible { outline: 2px solid rgba(112, 231, 194, .72); outline-offset: -4px; }
 .stage-wrap.is-dragging #physics-canvas { cursor: grabbing; }
 .stage-wrap.is-paused #physics-canvas { filter: saturate(.76); }
 .stage-overlay { position: absolute; z-index: 2; left: 19px; right: 19px; display: flex; align-items: center; justify-content: space-between; color: rgba(214, 224, 250, .6); font-family: var(--mono); font-size: 8px; letter-spacing: .07em; pointer-events: none; }
@@ -264,6 +265,7 @@ input[type='range']::-moz-range-thumb { width: 9px; height: 9px; border: 2px sol
 .selected-swatch { width: 26px; height: 26px; border-radius: 42% 58% 50% 50%; transform: rotate(-8deg); }
 .remove-button { width: 22px; height: 22px; margin-left: auto; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--subtle); font-size: 17px; line-height: 1; cursor: pointer; }
 .remove-button:hover { border-color: rgba(240, 125, 175, .45); color: #f07daf; }
+.duplicate-button:hover { border-color: rgba(112, 231, 194, .45); color: var(--mint); }
 .inspector-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 8px; margin: 18px 0; }
 .inspector-grid span, .inspector-grid strong { display: block; }
 .inspector-grid span { color: var(--subtle); font-family: var(--mono); font-size: 8px; }

@@ -38,11 +38,13 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Choose a spawn shape and click **Spawn soft body**, or press `B`.
 - Double-click empty stage space to drop the selected shape at that location.
 - Clear the live bodies with **Clear field** or press `C`; the active scene's obstacles remain in place.
+- Duplicate the selected body with `D` or the `＋` action in the inspector, preserving its shape and current motion.
 - Drag any body on the stage to throw it through the field.
 - Click an object in the manifest to inspect it; use `×` to remove the selection.
 - Press `Space` to pause/resume and `R` to reset the active scene.
 - Toggle **Spring guides** to reveal the live network links, or press `G`.
 - Open the keyboard reference with the `?` button or the `?` key.
+- Focus the stage to use keyboard shortcuts without leaving the canvas.
 - Tune the material and world sliders—including the signed wind current—while the solver is running.
 
 On narrow screens, the world-field controls remain available below the material lab so gravity, wind, friction, and restitution are still adjustable on touch devices.

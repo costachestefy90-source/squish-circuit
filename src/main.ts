@@ -48,6 +48,7 @@ const selectedCompression = must<HTMLElement>('selected-compression');
 const selectedLoad = must<HTMLElement>('selected-load');
 const selectedCopy = must<HTMLParagraphElement>('selected-copy');
 const clearButton = must<HTMLButtonElement>('clear-button');
+const duplicateButton = must<HTMLButtonElement>('duplicate-button');
 const memoryMeter = must<HTMLElement>('memory-meter');
 const memoryReadout = must<HTMLElement>('memory-readout');
 const energyReadout = must<HTMLElement>('energy-readout');
@@ -557,6 +558,12 @@ must<HTMLButtonElement>('remove-button').addEventListener('click', () => {
   engine.removeBody(selectedBodyId);
   setSelectedBody(engine.bodies[0]?.id ?? null);
 });
+duplicateButton.addEventListener('click', () => {
+  const body = selectedBody();
+  if (!body) return;
+  const clone = engine.duplicate(body);
+  setSelectedBody(clone.id);
+});
 must<HTMLButtonElement>('defaults-button').addEventListener('click', () => {
   engine.settings = { ...DEFAULT_SETTINGS };
   syncControls();
@@ -638,6 +645,9 @@ window.addEventListener('keydown', (event) => {
   } else if (event.key.toLowerCase() === 'c') {
     engine.clear();
     setSelectedBody(null);
+  } else if (event.key.toLowerCase() === 'd') {
+    const body = selectedBody();
+    if (body) setSelectedBody(engine.duplicate(body).id);
   } else if (/^[1-8]$/.test(event.key)) {
     loadPreset(PRESETS[Number(event.key) - 1].id);
   }

@@ -65,3 +65,11 @@ Double-clicking empty stage space now drops the selected shape into the field wi
 ## 15 — Faster experiments, clearer motion
 
 The control deck now has a **Clear field** action and `C` shortcut that removes live bodies while preserving the current scene's obstacle layout. The selected body also gets a restrained velocity arrow when it is moving, connecting the inspector's speed readout to a visual cue without turning every object into a debug overlay.
+
+## 16 — Branching a test in place
+
+The selected-body inspector now includes a duplicate action and `D` shortcut. A duplicate keeps the source shape, size, orientation, and current motion signature, then offsets itself into open space so users can compare two related bodies without rebuilding the setup by hand.
+
+## 17 — Keeping the stage keyboard-ready
+
+The canvas is now keyboard-focusable with a visible focus ring and a more descriptive accessible label. This makes the new duplicate and clear shortcuts usable from the stage itself, while preserving the direct pointer interaction for touch and mouse users.
