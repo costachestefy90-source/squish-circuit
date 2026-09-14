@@ -45,3 +45,7 @@ While exercising scenes with several bodies, I removed a stale-center edge case 
 ## 10 — Keeping crowded scenes light
 
 The collision pass now rejects body pairs whose center-distance bounding box cannot overlap before calculating a square root. It keeps the same contact threshold and response, but reduces unnecessary distance work when users spawn a larger cluster of soft bodies.
+
+## 11 — Announcing live state changes
+
+The status line now announces simulation pause/resume and scene changes through polite, atomic status regions. This keeps the canvas-first interface visually unchanged while making the most important live transitions available to assistive technology.
