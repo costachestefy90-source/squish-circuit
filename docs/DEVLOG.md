@@ -73,3 +73,7 @@ The selected-body inspector now includes a duplicate action and `D` shortcut. A 
 ## 17 — Keeping the stage keyboard-ready
 
 The canvas is now keyboard-focusable with a visible focus ring and a more descriptive accessible label. This makes the new duplicate and clear shortcuts usable from the stage itself, while preserving the direct pointer interaction for touch and mouse users.
+
+## 18 — Making time a material too
+
+Time scale is now exposed as a world-field slider from 10% to 100%. The existing slow-motion preset remains a quick starting point, but any scene can now be slowed down for close inspection without losing its material or obstacle setup.

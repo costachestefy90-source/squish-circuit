@@ -45,7 +45,7 @@ The result is intentionally compact and readable rather than a general-purpose p
 - Toggle **Spring guides** to reveal the live network links, or press `G`.
 - Open the keyboard reference with the `?` button or the `?` key.
 - Focus the stage to use keyboard shortcuts without leaving the canvas.
-- Tune the material and world sliders—including the signed wind current—while the solver is running.
+- Tune the material and world sliders—including signed wind current and time scale—while the solver is running.
 
 On narrow screens, the world-field controls remain available below the material lab so gravity, wind, friction, and restitution are still adjustable on touch devices.
 

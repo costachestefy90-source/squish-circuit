@@ -66,6 +66,7 @@ const sliderOutputs: Record<string, HTMLOutputElement> = {
   gravity: must<HTMLOutputElement>('gravity-output'),
   friction: must<HTMLOutputElement>('friction-output'),
   restitution: must<HTMLOutputElement>('restitution-output'),
+  timeScale: must<HTMLOutputElement>('timescale-output'),
   wind: must<HTMLOutputElement>('wind-output'),
 };
 
