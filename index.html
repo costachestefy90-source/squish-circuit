@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1020" />
+    <meta
+      name="description"
+      content="Squish Circuit is a tactile soft-body physics playground for things that bend, bounce, stretch, and recover."
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+    <title>Squish Circuit — Soft Body Playground</title>
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Squish Circuit home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>
+            <strong>SQUISH CIRCUIT</strong>
+            <small>SOFT MATTER / PLAYGROUND 01</small>
+          </span>
+        </a>
+        <div class="topbar-status">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span id="sim-status">SIMULATION ONLINE</span>
+          <span class="status-divider" aria-hidden="true"></span>
+          <span id="clock-readout">00:00:00</span>
+        </div>
+        <div class="topbar-actions">
+          <button id="pause-button" class="icon-button" type="button" aria-pressed="false" title="Pause simulation (Space)">
+            <span class="pause-icon" aria-hidden="true"></span>
+            <span class="sr-only">Pause simulation</span>
+          </button>
+          <button id="reset-button" class="icon-button" type="button" title="Reset current preset (R)">
+            <span class="reset-icon" aria-hidden="true">↺</span>
+            <span class="sr-only">Reset current preset</span>
+          </button>
+        </div>
+      </header>
+
+      <main id="top" class="workspace">
+        <aside class="panel controls-panel" aria-label="Simulation controls">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">CONTROL DECK</span>
+              <h1>Shape the motion.</h1>
+            </div>
+            <span class="panel-index">01</span>
+          </div>
+
+          <section class="control-section">
+            <div class="section-label-row">
+              <span class="section-label">SCENES</span>
+              <span class="section-note">DATA PRESETS</span>
+            </div>
+            <div id="preset-grid" class="preset-grid" role="list" aria-label="Physics presets">
+              <button class="preset-button active" type="button" data-preset="jelly">
+                <span class="preset-number">01</span><span><strong>Jelly cubes</strong><small>stack + settle</small></span>
+              </button>
+              <button class="preset-button" type="button" data-preset="blobs">
+                <span class="preset-number">02</span><span><strong>Bouncing blobs</strong><small>high restitution</small></span>
+              </button>
+              <button class="preset-button" type="button" data-preset="low-gravity">
+                <span class="preset-number">03</span><span><strong>Low gravity</strong><small>float study</small></span>
+              </button>
+              <button class="preset-button" type="button" data-preset="heavy-gravity">
+                <span class="preset-number">04</span><span><strong>Heavy gravity</strong><small>impact lab</small></span>
+              </button>
+              <button class="preset-button" type="button" data-preset="obstacle-course">
+                <span class="preset-number">05</span><span><strong>Obstacle course</strong><small>thread the gates</small></span>
+              </button>
+              <button class="preset-button" type="button" data-preset="squish-test">
+                <span class="preset-number">06</span><span><strong>Squish test</strong><small>compression rig</small></span>
+              </button>
+              <button class="preset-button" type="button" data-preset="slow-motion">
+                <span class="preset-number">07</span><span><strong>Slow motion</strong><small>watch the rebound</small></span>
+              </button>
+            </div>
+          </section>
+
+          <section class="control-section shape-section">
+            <div class="section-label-row">
+              <span class="section-label">SPAWN SHAPE</span>
+              <span class="section-note" id="selected-shape-note">JELLY CUBE</span>
+            </div>
+            <div id="shape-picker" class="shape-picker" role="group" aria-label="Choose a shape to spawn">
+              <button class="shape-button active" type="button" data-shape="cube"><span class="shape-swatch cube-swatch" aria-hidden="true"></span><span>Cube</span></button>
+              <button class="shape-button" type="button" data-shape="blob"><span class="shape-swatch blob-swatch" aria-hidden="true"></span><span>Blob</span></button>
+              <button class="shape-button" type="button" data-shape="pillow"><span class="shape-swatch pillow-swatch" aria-hidden="true"></span><span>Pillow</span></button>
+              <button class="shape-button" type="button" data-shape="orb"><span class="shape-swatch orb-swatch" aria-hidden="true"></span><span>Orb</span></button>
+            </div>
+            <button id="spawn-button" class="primary-button" type="button"><span>＋</span> Spawn soft body <kbd>B</kbd></button>
+          </section>
+
+          <section class="control-section sliders-section">
+            <div class="section-label-row">
+              <span class="section-label">MATERIAL LAB</span>
+              <button id="defaults-button" class="text-button" type="button">defaults</button>
+            </div>
+            <label class="slider-control" for="softness-range">
+              <span class="slider-label"><span>Softness</span><output id="softness-output">42%</output></span>
+              <input id="softness-range" data-setting="softness" type="range" min="0" max="100" value="42" />
+            </label>
+            <label class="slider-control" for="pressure-range">
+              <span class="slider-label"><span>Internal pressure</span><output id="pressure-output">68%</output></span>
+              <input id="pressure-range" data-setting="pressure" type="range" min="0" max="100" value="68" />
+            </label>
+            <label class="slider-control" for="spring-range">
+              <span class="slider-label"><span>Spring strength</span><output id="spring-output">56%</output></span>
+              <input id="spring-range" data-setting="springStrength" type="range" min="0" max="100" value="56" />
+            </label>
+            <label class="slider-control" for="damping-range">
+              <span class="slider-label"><span>Damping</span><output id="damping-output">84%</output></span>
+              <input id="damping-range" data-setting="damping" type="range" min="0" max="100" value="84" />
+            </label>
+          </section>
+
+          <section class="control-section sliders-section world-section">
+            <div class="section-label-row">
+              <span class="section-label">WORLD FIELD</span>
+              <span class="section-note">GLOBAL</span>
+            </div>
+            <label class="slider-control" for="gravity-range">
+              <span class="slider-label"><span>Gravity</span><output id="gravity-output">1.0G</output></span>
+              <input id="gravity-range" data-setting="gravity" type="range" min="0" max="200" value="100" />
+            </label>
+            <label class="slider-control" for="friction-range">
+              <span class="slider-label"><span>Surface friction</span><output id="friction-output">72%</output></span>
+              <input id="friction-range" data-setting="friction" type="range" min="0" max="100" value="72" />
+            </label>
+            <label class="slider-control" for="restitution-range">
+              <span class="slider-label"><span>Restitution</span><output id="restitution-output">46%</output></span>
+              <input id="restitution-range" data-setting="restitution" type="range" min="0" max="100" value="46" />
+            </label>
+          </section>
+
+          <div class="control-footer">
+            <span class="key-hint"><kbd>SPACE</kbd> pause</span>
+            <span class="key-hint"><kbd>R</kbd> reset</span>
+            <span class="key-hint"><kbd>1—7</kbd> scenes</span>
+          </div>
+        </aside>
+
+        <section class="stage-panel panel" aria-label="Soft body simulation stage">
+          <div class="stage-toolbar">
+            <div class="stage-title"><span class="signal-icon" aria-hidden="true"></span><span id="scene-kicker">SCENE / JELLY CUBES</span></div>
+            <div class="stage-tools">
+              <label class="toggle-control"><input id="guides-toggle" type="checkbox" /><span class="toggle-track" aria-hidden="true"></span><span>Spring guides</span></label>
+              <span class="stage-resolution">CANVAS / <span id="resolution-readout">—</span></span>
+            </div>
+          </div>
+          <div id="stage-wrap" class="stage-wrap">
+            <canvas id="physics-canvas" aria-label="Interactive soft body physics canvas. Drag a shape to throw it around the scene."></canvas>
+            <div class="stage-overlay stage-overlay-top"><span id="scene-description">A calm stack for tuning shape memory.</span><span class="drag-tip"><span class="mouse-icon" aria-hidden="true"></span> DRAG TO THROW</span></div>
+            <div class="stage-overlay stage-overlay-bottom"><span><i class="legend-dot mint"></i>SOFT BODY</span><span><i class="legend-line"></i>COLLISION FIELD</span><span id="stage-hint">tap a body to inspect</span></div>
+            <div class="paused-badge" id="paused-badge" hidden><span class="paused-bars" aria-hidden="true"></span> SIMULATION PAUSED</div>
+          </div>
+          <div class="stage-metrics" aria-live="polite">
+            <div class="metric"><span class="metric-label">ENERGY</span><strong id="energy-readout">0.00</strong><span class="metric-unit">J</span></div>
+            <div class="metric"><span class="metric-label">OBJECTS</span><strong id="object-readout">0</strong><span class="metric-unit">LIVE</span></div>
+            <div class="metric"><span class="metric-label">FPS</span><strong id="fps-readout">60</strong><span class="metric-unit">HZ</span></div>
+            <div class="metric solver-metric"><span class="metric-label">SOLVER</span><strong>VERLET</strong><span class="metric-unit">04 PASS</span></div>
+          </div>
+        </section>
+
+        <aside class="panel inspector-panel" aria-label="Object inspector">
+          <div class="panel-heading inspector-heading">
+            <div>
+              <span class="eyebrow">LIVE INVENTORY</span>
+              <h2>Object manifest.</h2>
+            </div>
+            <span class="panel-index">02</span>
+          </div>
+          <div id="object-list" class="object-list" aria-live="polite"></div>
+          <div id="inspector-empty" class="empty-inspector">
+            <span class="empty-orbit" aria-hidden="true"></span>
+            <strong>Select a body</strong>
+            <span>Inspect its material signature and drag it through the field.</span>
+          </div>
+          <div id="selected-inspector" class="selected-inspector" hidden>
+            <div class="selected-object-header"><span id="selected-swatch" class="selected-swatch"></span><div><span class="eyebrow">SELECTED BODY</span><h3 id="selected-name">—</h3></div><button id="remove-button" class="remove-button" type="button" title="Remove selected body">×</button></div>
+            <div class="inspector-grid">
+              <div><span>TYPE</span><strong id="selected-type">—</strong></div>
+              <div><span>SIZE</span><strong id="selected-size">—</strong></div>
+              <div><span>STATE</span><strong id="selected-state">—</strong></div>
+              <div><span>BOUNCE</span><strong id="selected-bounce">—</strong></div>
+            </div>
+            <div class="material-bar"><span>SHAPE MEMORY</span><div><i id="memory-meter"></i></div><strong id="memory-readout">—</strong></div>
+            <p id="selected-copy" class="selected-copy">—</p>
+          </div>
+          <div class="inspector-footer"><span class="legend-dot lilac"></span><span>Each ring is a live spring network.</span></div>
+        </aside>
+      </main>
+      <footer class="app-footer"><span>STARDANCE / SOFT BODY PHYSICS PLAYGROUND</span><span>NO BACKEND · LOCAL SIMULATION · STATIC READY</span></footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
