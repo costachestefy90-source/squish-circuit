@@ -100,7 +100,9 @@ function syncControls(): void {
     input.value = String(sliderValue);
     input.style.setProperty('--value', `${sliderValue}%`);
     const output = sliderOutputs[setting];
-    if (output) output.value = formatSetting(setting, value);
+    const formattedValue = formatSetting(setting, value);
+    if (output) output.value = formattedValue;
+    input.setAttribute('aria-valuetext', formattedValue);
   }
 }
 
@@ -586,7 +588,9 @@ for (const input of sliderInputs) {
     engine.settings[setting] = setting === 'gravity' ? rawValue * 2 : setting === 'wind' ? rawValue * 2 - 1 : rawValue;
     input.style.setProperty('--value', `${input.value}%`);
     const output = sliderOutputs[setting];
-    if (output) output.value = formatSetting(setting, engine.settings[setting]);
+    const formattedValue = formatSetting(setting, engine.settings[setting]);
+    if (output) output.value = formattedValue;
+    input.setAttribute('aria-valuetext', formattedValue);
     updateInspector();
   });
 }

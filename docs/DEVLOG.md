@@ -77,3 +77,7 @@ The canvas is now keyboard-focusable with a visible focus ring and a more descri
 ## 18 — Making time a material too
 
 Time scale is now exposed as a world-field slider from 10% to 100%. The existing slow-motion preset remains a quick starting point, but any scene can now be slowed down for close inspection without losing its material or obstacle setup.
+
+## 19 — Speaking in the same units
+
+The slider controls now publish their formatted values to assistive technology as well as the visible outputs. Signed wind values, gravity in G, and time scale percentages are no longer exposed only as the internal range positions.
