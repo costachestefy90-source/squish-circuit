@@ -37,3 +37,7 @@ The mobile layout now keeps the world-field sliders visible instead of hiding gr
 ## 08 — Making the controls teach themselves
 
 The final interface pass added a keyboard-reference dialog that can be opened from the `?` button or keyboard, with short descriptions for pause, reset, spawning, guides, scene presets, and drag throwing. It keeps the control deck approachable without adding another persistent panel to the playground.
+
+## 09 — Tightening contact resolution
+
+While exercising scenes with several bodies, I removed a stale-center edge case in pairwise overlap resolution. Each collision pair now measures both current centers after earlier contacts in the same pass, keeping chained body contacts more stable without adding solver passes or changing the compact Verlet model.

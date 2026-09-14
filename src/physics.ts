@@ -621,9 +621,9 @@ export class SoftBodyEngine {
   private solveBodyCollisions(): void {
     for (let aIndex = 0; aIndex < this.bodies.length; aIndex += 1) {
       const a = this.bodies[aIndex];
-      const aCenter = bodyCenter(a);
       for (let bIndex = aIndex + 1; bIndex < this.bodies.length; bIndex += 1) {
         const b = this.bodies[bIndex];
+        const aCenter = bodyCenter(a);
         const bCenter = bodyCenter(b);
         let dx = bCenter.x - aCenter.x;
         let dy = bCenter.y - aCenter.y;
