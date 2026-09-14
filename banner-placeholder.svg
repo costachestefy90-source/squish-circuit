@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Squish Circuit soft-body physics playground banner</title>
+  <desc id="desc">A dark navy physics lab with glowing mint and lilac squishy shapes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#11172b"/>
+      <stop offset="0.55" stop-color="#1a2140"/>
+      <stop offset="1" stop-color="#11172b"/>
+    </linearGradient>
+    <radialGradient id="mint" cx="35%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#d8fff2"/>
+      <stop offset="0.34" stop-color="#69e9c1"/>
+      <stop offset="1" stop-color="#259c95"/>
+    </radialGradient>
+    <radialGradient id="lilac" cx="38%" cy="28%" r="78%">
+      <stop offset="0" stop-color="#fff1ff"/>
+      <stop offset="0.34" stop-color="#c49afa"/>
+      <stop offset="1" stop-color="#765bc1"/>
+    </radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="22"/></filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#050812" flood-opacity=".55"/></filter>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse">
+      <path d="M54 0H0V54" fill="none" stroke="#a9b7e8" stroke-opacity=".09"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1110" cy="180" r="260" fill="#64e5c4" opacity=".13" filter="url(#glow)"/>
+  <circle cx="1350" cy="650" r="270" fill="#ad8bf7" opacity=".11" filter="url(#glow)"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+  <path d="M0 760 C280 704 440 804 696 748S1140 676 1600 742V900H0Z" fill="#0b1020" opacity=".62"/>
+  <g filter="url(#shadow)">
+    <path d="M1015 182 C1072 121 1217 113 1266 184 C1301 236 1260 316 1194 337 C1114 362 1010 328 984 268 C973 239 987 212 1015 182Z" fill="url(#mint)"/>
+    <path d="M1312 354 C1356 302 1468 304 1505 360 C1537 408 1502 484 1446 500 C1378 520 1295 484 1278 433 C1269 405 1286 379 1312 354Z" fill="url(#lilac)"/>
+    <path d="M866 454 C904 412 1002 420 1027 472 C1049 519 1010 586 953 595 C895 603 833 554 839 503 C842 484 851 469 866 454Z" fill="#f9b36a"/>
+  </g>
+  <g fill="none" stroke="#e2e8ff" stroke-linecap="round">
+    <path d="M1017 220 C1091 183 1186 189 1240 232" stroke-width="10" opacity=".31"/>
+    <path d="M1330 382 C1371 355 1431 358 1473 386" stroke-width="9" opacity=".28"/>
+    <path d="M879 488 C919 464 977 469 1004 497" stroke-width="8" opacity=".29"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="120" y="250" fill="#9df6d9" font-size="28" font-weight="700" letter-spacing="7">STARDANCE / PLAYGROUND 01</text>
+    <text x="112" y="395" fill="#f5f7ff" font-size="102" font-weight="800" letter-spacing="-4">SQUISH</text>
+    <text x="112" y="498" fill="#c2b1ff" font-size="102" font-weight="800" letter-spacing="-4">CIRCUIT</text>
+    <text x="120" y="569" fill="#c1c9e9" font-size="26" letter-spacing="1">A tactile sandbox for things that bend, bounce, and recover.</text>
+    <rect x="119" y="654" width="194" height="9" rx="4.5" fill="#69e9c1"/>
+    <rect x="326" y="654" width="86" height="9" rx="4.5" fill="#c49afa"/>
+    <rect x="425" y="654" width="42" height="9" rx="4.5" fill="#f9b36a"/>
+  </g>
+</svg>
