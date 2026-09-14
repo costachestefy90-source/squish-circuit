@@ -77,6 +77,9 @@
               <button class="preset-button" type="button" data-preset="slow-motion" aria-pressed="false">
                 <span class="preset-number">07</span><span><strong>Slow motion</strong><small>watch the rebound</small></span>
               </button>
+              <button class="preset-button" type="button" data-preset="wind-tunnel" aria-pressed="false">
+                <span class="preset-number">08</span><span><strong>Wind tunnel</strong><small>steer the current</small></span>
+              </button>
             </div>
           </section>
 
@@ -90,6 +93,7 @@
               <button class="shape-button" type="button" data-shape="blob" aria-pressed="false"><span class="shape-swatch blob-swatch" aria-hidden="true"></span><span>Blob</span></button>
               <button class="shape-button" type="button" data-shape="pillow" aria-pressed="false"><span class="shape-swatch pillow-swatch" aria-hidden="true"></span><span>Pillow</span></button>
               <button class="shape-button" type="button" data-shape="orb" aria-pressed="false"><span class="shape-swatch orb-swatch" aria-hidden="true"></span><span>Orb</span></button>
+              <button class="shape-button" type="button" data-shape="capsule" aria-pressed="false"><span class="shape-swatch capsule-swatch" aria-hidden="true"></span><span>Capsule</span></button>
             </div>
             <button id="spawn-button" class="primary-button" type="button"><span>＋</span> Spawn soft body <kbd>B</kbd></button>
           </section>
@@ -126,6 +130,10 @@
               <span class="slider-label"><span>Gravity</span><output id="gravity-output">1.0G</output></span>
               <input id="gravity-range" data-setting="gravity" type="range" min="0" max="200" value="100" />
             </label>
+            <label class="slider-control" for="wind-range">
+              <span class="slider-label"><span>Wind current</span><output id="wind-output">0%</output></span>
+              <input id="wind-range" data-setting="wind" type="range" min="0" max="200" value="100" />
+            </label>
             <label class="slider-control" for="friction-range">
               <span class="slider-label"><span>Surface friction</span><output id="friction-output">72%</output></span>
               <input id="friction-range" data-setting="friction" type="range" min="0" max="100" value="72" />
@@ -141,7 +149,7 @@
             <span class="key-hint"><kbd>R</kbd> reset</span>
             <span class="key-hint"><kbd>B</kbd> spawn</span>
             <span class="key-hint"><kbd>G</kbd> guides</span>
-            <span class="key-hint"><kbd>1—7</kbd> scenes</span>
+            <span class="key-hint"><kbd>1—8</kbd> scenes</span>
           </div>
         </aside>
 
@@ -157,7 +165,7 @@
           </div>
           <div id="stage-wrap" class="stage-wrap">
             <canvas id="physics-canvas" aria-label="Interactive soft body physics canvas. Drag a shape to throw it around the scene."></canvas>
-            <div class="stage-overlay stage-overlay-top"><span id="scene-description">A calm stack for tuning shape memory.</span><span class="drag-tip"><span class="mouse-icon" aria-hidden="true"></span> DRAG TO THROW</span></div>
+            <div class="stage-overlay stage-overlay-top"><span id="scene-description">A calm stack for tuning shape memory.</span><span class="drag-tip"><span class="mouse-icon" aria-hidden="true"></span> DRAG TO THROW · 2× DROP</span></div>
             <div class="stage-overlay stage-overlay-bottom"><span><i class="legend-dot mint"></i>SOFT BODY</span><span><i class="legend-line"></i>COLLISION FIELD</span><span id="stage-hint">tap a body to inspect</span></div>
             <div class="paused-badge" id="paused-badge" hidden><span class="paused-bars" aria-hidden="true"></span> SIMULATION PAUSED</div>
           </div>
@@ -190,6 +198,10 @@
               <div><span>SIZE</span><strong id="selected-size">—</strong></div>
               <div><span>STATE</span><strong id="selected-state">—</strong></div>
               <div><span>BOUNCE</span><strong id="selected-bounce">—</strong></div>
+              <div><span>AREA</span><strong id="selected-area">—</strong></div>
+              <div><span>SPEED</span><strong id="selected-speed">—</strong></div>
+              <div><span>COMPRESSION</span><strong id="selected-compression">—</strong></div>
+              <div><span>SPRING LOAD</span><strong id="selected-load">—</strong></div>
             </div>
             <div class="material-bar"><span>SHAPE MEMORY</span><div><i id="memory-meter"></i></div><strong id="memory-readout">—</strong></div>
             <p id="selected-copy" class="selected-copy">—</p>
@@ -205,7 +217,8 @@
           <div><kbd>R</kbd><span>Reset the active scene</span></div>
           <div><kbd>B</kbd><span>Spawn the selected soft body</span></div>
           <div><kbd>G</kbd><span>Toggle spring guides</span></div>
-          <div><kbd>1—7</kbd><span>Load a scene preset</span></div>
+          <div><kbd>1—8</kbd><span>Load a scene preset</span></div>
+          <div><kbd>2×</kbd><span>Double-click empty space to drop the selected shape</span></div>
           <div><span class="shortcut-pointer" aria-hidden="true">↗</span><span>Drag a body to throw it</span></div>
         </div>
         <form method="dialog"><button class="dialog-close" type="submit">Close</button></form>

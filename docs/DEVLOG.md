@@ -49,3 +49,15 @@ The collision pass now rejects body pairs whose center-distance bounding box can
 ## 11 — Announcing live state changes
 
 The status line now announces simulation pause/resume and scene changes through polite, atomic status regions. This keeps the canvas-first interface visually unchanged while making the most important live transitions available to assistive technology.
+
+## 12 — Giving the field a current
+
+The world model now has a signed wind-current control. A positive or negative setting applies a lateral acceleration to every particle and draws a restrained arrow field over the canvas, so the force is visible as well as tactile. The new Wind tunnel scene turns that control into a small obstacle study with three vanes.
+
+## 13 — Adding a directional body
+
+Capsules join the cube, blob, pillow, and orb profiles as a fifth spawnable body. The longer elliptical ring uses the same spring, area, collision, and pointer systems as the other bodies, and the selected-body inspector now exposes live area, speed, compression, and spring-load readings for closer comparisons.
+
+## 14 — Making placement quicker
+
+Double-clicking empty stage space now drops the selected shape into the field with a small launch impulse. The shortcut dialog documents the gesture alongside the existing keyboard controls, making it possible to build a test cluster without repeatedly returning to the control deck.

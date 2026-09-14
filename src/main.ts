@@ -42,6 +42,10 @@ const selectedType = must<HTMLElement>('selected-type');
 const selectedSize = must<HTMLElement>('selected-size');
 const selectedState = must<HTMLElement>('selected-state');
 const selectedBounce = must<HTMLElement>('selected-bounce');
+const selectedArea = must<HTMLElement>('selected-area');
+const selectedSpeed = must<HTMLElement>('selected-speed');
+const selectedCompression = must<HTMLElement>('selected-compression');
+const selectedLoad = must<HTMLElement>('selected-load');
 const selectedCopy = must<HTMLParagraphElement>('selected-copy');
 const memoryMeter = must<HTMLElement>('memory-meter');
 const memoryReadout = must<HTMLElement>('memory-readout');
@@ -60,6 +64,7 @@ const sliderOutputs: Record<string, HTMLOutputElement> = {
   gravity: must<HTMLOutputElement>('gravity-output'),
   friction: must<HTMLOutputElement>('friction-output'),
   restitution: must<HTMLOutputElement>('restitution-output'),
+  wind: must<HTMLOutputElement>('wind-output'),
 };
 
 const sliderInputs = Array.from(document.querySelectorAll<HTMLInputElement>('input[type="range"][data-setting]'));
@@ -70,11 +75,16 @@ function clamp(value: number, min: number, max: number): number {
 
 function formatSetting(setting: keyof PhysicsSettings, value: number): string {
   if (setting === 'gravity') return `${value.toFixed(1)}G`;
+  if (setting === 'wind') {
+    if (Math.abs(value) < 0.005) return '0%';
+    return `${value > 0 ? '+' : '−'}${Math.round(Math.abs(value) * 100)}%`;
+  }
   return `${Math.round(value * 100)}%`;
 }
 
 function sliderValueFor(setting: keyof PhysicsSettings, value: number): number {
   if (setting === 'gravity') return Math.round((value / 2) * 100);
+  if (setting === 'wind') return Math.round((value + 1) * 50);
   return Math.round(value * 100);
 }
 
@@ -183,6 +193,12 @@ function updateInspector(): void {
   selectedSize.textContent = `${Math.round(body.radius * 2)} PX`;
   selectedState.textContent = engine.getBodyState(body);
   selectedBounce.textContent = `${Math.round(engine.settings.restitution * 100)}%`;
+  selectedArea.textContent = `${Math.round(engine.getBodyArea(body))} PX²`;
+  selectedSpeed.textContent = `${Math.round(engine.getBodySpeed(body))} PX/S`;
+  const compression = engine.getBodyCompression(body);
+  const compressionPercent = Math.round(Math.abs(compression) * 100);
+  selectedCompression.textContent = compressionPercent === 0 ? '0%' : `${compression > 0 ? '+' : '−'}${compressionPercent}%`;
+  selectedLoad.textContent = `${Math.round(engine.getBodySpringLoad(body))}%`;
   const memory = clamp(100 - engine.settings.softness * 64 + engine.settings.springStrength * 18, 8, 100);
   memoryMeter.style.width = `${memory}%`;
   memoryReadout.textContent = `${Math.round(memory)}%`;
@@ -191,6 +207,7 @@ function updateInspector(): void {
     blob: 'A loose membrane with uneven rhythm. Throw it into a wall and watch the rebound travel around the ring.',
     pillow: 'Wide, low-pressure mass. It yields quickly, then uses its area memory to recover.',
     orb: 'The clean baseline: an even ring with just enough give to show the solver breathing.',
+    capsule: 'A directional body with a long axis. Let the current carry it, then watch the ends fold into a soft turn.',
   };
   selectedCopy.textContent = copyByShape[body.shape];
 }
@@ -291,6 +308,42 @@ function drawCornerMarks(width: number, height: number): void {
     ctx.lineTo(x + dx * size, y);
     ctx.stroke();
   }
+  ctx.restore();
+}
+
+function drawWindField(width: number, height: number): void {
+  const wind = engine.settings.wind;
+  if (Math.abs(wind) < 0.03) return;
+  const direction = wind > 0 ? 1 : -1;
+  const magnitude = Math.abs(wind);
+  const color = wind > 0 ? '#70e7c2' : '#c29af5';
+  ctx.save();
+  ctx.strokeStyle = hexToRgba(color, 0.12 + magnitude * 0.12);
+  ctx.fillStyle = hexToRgba(color, 0.2 + magnitude * 0.16);
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 7]);
+  const length = 18 + magnitude * 24;
+  for (let y = 92; y < height * 0.76; y += 72) {
+    for (let x = direction > 0 ? 26 : width - 26; direction > 0 ? x < width - 34 : x > 34; x += direction * 92) {
+      const endX = x + direction * length;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(endX, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(endX, y);
+      ctx.lineTo(endX - direction * 5, y - 3);
+      ctx.lineTo(endX - direction * 5, y + 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.setLineDash([4, 7]);
+    }
+  }
+  ctx.setLineDash([]);
+  ctx.font = '700 8px ui-monospace, SFMono-Regular, Menlo, monospace';
+  ctx.fillStyle = hexToRgba(color, 0.64);
+  ctx.fillText(`WIND FIELD // ${formatSetting('wind', wind)}`, 22, 36);
   ctx.restore();
 }
 
@@ -398,6 +451,7 @@ function drawScene(): void {
   ctx.fillRect(0, 0, width, height);
   drawGrid(width, height);
   drawCornerMarks(width, height);
+  drawWindField(width, height);
   for (const obstacle of engine.obstacles) drawObstacle(obstacle);
   for (const body of engine.bodies) drawBody(body);
   ctx.save();
@@ -409,7 +463,7 @@ function drawScene(): void {
   ctx.restore();
 }
 
-function pointerPosition(event: PointerEvent): { x: number; y: number } {
+function pointerPosition(event: MouseEvent): { x: number; y: number } {
   const bounds = canvas.getBoundingClientRect();
   return { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
 }
@@ -422,6 +476,17 @@ function spawnSelectedShape(): void {
   }
   setSelectedBody(body.id);
 }
+
+canvas.addEventListener('dblclick', (event) => {
+  const pointer = pointerPosition(event);
+  if (engine.hitTest(pointer.x, pointer.y)) return;
+  const body = engine.spawn(selectedShape, pointer.x, pointer.y);
+  for (const point of body.points) {
+    point.oldX = point.x - engine.settings.wind * 1.4;
+    point.oldY = point.y + 0.6;
+  }
+  setSelectedBody(body.id);
+});
 
 document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => {
   button.addEventListener('click', () => loadPreset(button.dataset.preset as PresetId));
@@ -480,7 +545,7 @@ for (const input of sliderInputs) {
   input.addEventListener('input', () => {
     const setting = input.dataset.setting as keyof PhysicsSettings;
     const rawValue = Number(input.value) / 100;
-    engine.settings[setting] = setting === 'gravity' ? rawValue * 2 : rawValue;
+    engine.settings[setting] = setting === 'gravity' ? rawValue * 2 : setting === 'wind' ? rawValue * 2 - 1 : rawValue;
     input.style.setProperty('--value', `${input.value}%`);
     const output = sliderOutputs[setting];
     if (output) output.value = formatSetting(setting, engine.settings[setting]);
@@ -540,7 +605,7 @@ window.addEventListener('keydown', (event) => {
   } else if (event.key.toLowerCase() === 'g') {
     guidesToggle.checked = !guidesToggle.checked;
     showGuides = guidesToggle.checked;
-  } else if (/^[1-7]$/.test(event.key)) {
+  } else if (/^[1-8]$/.test(event.key)) {
     loadPreset(PRESETS[Number(event.key) - 1].id);
   }
 });

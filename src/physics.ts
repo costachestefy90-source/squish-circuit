@@ -1,4 +1,4 @@
-export type SoftBodyShape = 'cube' | 'blob' | 'pillow' | 'orb';
+export type SoftBodyShape = 'cube' | 'blob' | 'pillow' | 'orb' | 'capsule';
 export type PresetId =
   | 'jelly'
   | 'blobs'
@@ -6,7 +6,8 @@ export type PresetId =
   | 'heavy-gravity'
   | 'obstacle-course'
   | 'squish-test'
-  | 'slow-motion';
+  | 'slow-motion'
+  | 'wind-tunnel';
 
 export interface PhysicsSettings {
   softness: number;
@@ -17,6 +18,7 @@ export interface PhysicsSettings {
   restitution: number;
   springStrength: number;
   timeScale: number;
+  wind: number;
 }
 
 export interface BodySeed {
@@ -99,6 +101,7 @@ export const DEFAULT_SETTINGS: PhysicsSettings = {
   restitution: 0.46,
   springStrength: 0.56,
   timeScale: 1,
+  wind: 0,
 };
 
 export const PALETTE = [
@@ -114,6 +117,7 @@ export const SHAPE_LABELS: Record<SoftBodyShape, string> = {
   blob: 'Bouncing blob',
   pillow: 'Pillow mass',
   orb: 'Soft orb',
+  capsule: 'Soft capsule',
 };
 
 export const PRESETS: PresetDefinition[] = [
@@ -227,6 +231,25 @@ export const PRESETS: PresetDefinition[] = [
     ],
     obstacles: [{ x: 0.07, y: 0.82, w: 0.86, h: 0.035, label: 'TIME DECK', tone: 'mint' }],
   },
+  {
+    id: 'wind-tunnel',
+    name: 'Wind tunnel',
+    kicker: 'SCENE / WIND TUNNEL',
+    description: 'A cross-current obstacle study for steering soft matter through vanes.',
+    settings: { softness: 0.56, pressure: 0.76, gravity: 0.62, wind: 0.74, restitution: 0.58, friction: 0.42, timeScale: 1 },
+    bodies: [
+      { shape: 'orb', x: 0.16, y: 0.22, size: 0.072 },
+      { shape: 'capsule', x: 0.38, y: 0.14, size: 0.09, rotation: 0.12 },
+      { shape: 'blob', x: 0.62, y: 0.3, size: 0.078 },
+      { shape: 'capsule', x: 0.83, y: 0.18, size: 0.07, rotation: -0.18 },
+    ],
+    obstacles: [
+      { x: 0.07, y: 0.82, w: 0.86, h: 0.035, label: 'WIND DECK', tone: 'mint' },
+      { x: 0.27, y: 0.56, w: 0.025, h: 0.18, label: 'VANE A', tone: 'lilac' },
+      { x: 0.55, y: 0.3, w: 0.025, h: 0.22, label: 'VANE B', tone: 'orange' },
+      { x: 0.75, y: 0.59, w: 0.025, h: 0.15, label: 'VANE C', tone: 'mint' },
+    ],
+  },
 ];
 
 function clamp(value: number, min: number, max: number): number {
@@ -244,6 +267,10 @@ function shapeProfile(shape: SoftBodyShape, angle: number, phase: number): numbe
   if (shape === 'pillow') {
     const superellipse = Math.pow(Math.pow(Math.abs(c), 3.8) + Math.pow(Math.abs(s), 3.8), 1 / 3.8);
     return 0.88 / Math.max(superellipse, 0.01);
+  }
+  if (shape === 'capsule') {
+    const ellipse = Math.sqrt((c * c) / (1.16 * 1.16) + (s * s) / (0.72 * 0.72));
+    return 0.88 / Math.max(ellipse, 0.01) + Math.sin(angle * 2 + phase) * 0.018;
   }
   if (shape === 'blob') return 1 + Math.sin(angle * 3 + phase) * 0.1 + Math.sin(angle * 5 - phase) * 0.055;
   return 1 + Math.sin(angle * 2 + phase) * 0.025;
@@ -415,6 +442,7 @@ export class SoftBodyEngine {
     if (seconds <= 0) return;
     const damping = 0.88 + this.settings.damping * 0.115;
     const acceleration = 980 * this.settings.gravity;
+    const windAcceleration = 900 * this.settings.wind;
 
     for (const body of this.bodies) {
       if (body.dragging) continue;
@@ -423,7 +451,7 @@ export class SoftBodyEngine {
         const velocityY = (point.y - point.oldY) * damping;
         point.oldX = point.x;
         point.oldY = point.y;
-        point.x += velocityX;
+        point.x += velocityX + windAcceleration * seconds * seconds;
         point.y += velocityY + acceleration * seconds * seconds;
       }
     }
@@ -469,9 +497,32 @@ export class SoftBodyEngine {
     return polygonArea(body.points);
   }
 
+  getBodySpeed(body: SoftBody): number {
+    let speed = 0;
+    for (const point of body.points) speed += Math.hypot(point.x - point.oldX, point.y - point.oldY);
+    return (speed / body.points.length) * 60;
+  }
+
+  getBodyCompression(body: SoftBody): number {
+    if (body.restArea <= 0) return 0;
+    return clamp(1 - polygonArea(body.points) / body.restArea, -1, 1);
+  }
+
+  getBodySpringLoad(body: SoftBody): number {
+    if (body.springs.length === 0) return 0;
+    let load = 0;
+    for (const spring of body.springs) {
+      const a = body.points[spring.a];
+      const b = body.points[spring.b];
+      const rest = Math.max(spring.rest, 0.001);
+      load += (Math.abs(distance(a, b) - rest) / rest) * spring.weight;
+    }
+    return clamp((load / body.springs.length) * 100, 0, 999);
+  }
+
   private createBody(seed: BodySeed, paletteIndex: number): SoftBody {
     const phase = (paletteIndex + 1) * 0.9;
-    const pointCount = seed.shape === 'pillow' ? 14 : 12;
+    const pointCount = seed.shape === 'pillow' || seed.shape === 'capsule' ? 14 : 12;
     const radius = seed.size * Math.min(this.width, this.height);
     const centerX = seed.x * this.width;
     const centerY = seed.y * this.height;
