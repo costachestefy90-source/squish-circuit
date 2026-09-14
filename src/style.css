@@ -195,6 +195,7 @@ input[type='range']::-moz-range-thumb { width: 9px; height: 9px; border: 2px sol
 .signal-icon { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 12px rgba(247, 178, 104, .7); }
 .stage-tools { display: flex; align-items: center; gap: 16px; }
 .stage-export-button { color: var(--mint); }
+.export-status { min-width: 72px; color: var(--subtle); font-family: var(--mono); font-size: 8px; letter-spacing: .08em; text-align: right; }
 .stage-resolution { color: var(--subtle); font-family: var(--mono); font-size: 8px; }
 .toggle-control { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-family: var(--mono); font-size: 8px; cursor: pointer; }
 .toggle-control input { position: absolute; opacity: 0; pointer-events: none; }

@@ -25,3 +25,7 @@ The app was kept static: Vite builds the TypeScript and Canvas 2D client into `d
 ## 05 — Small interaction polish
 
 After the first live pass, I tightened two details that matter during repeated testing: slider tracks now show their actual normalized values instead of a fixed midpoint fill, and the spring-guide toggle can be driven with `G` in addition to the visible switch. The shortcut strip now exposes spawn and guide controls alongside pause, reset, and scene selection.
+
+## 06 — Making feedback legible
+
+The next polish pass made the scene and shape choices expose their selected state to assistive technology, added a small export-status readout for the **SAVE PNG** action, and kept the live slider track fill synchronized with each control. These changes preserve the compact visual system while making repeated exploration easier to understand.

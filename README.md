@@ -15,7 +15,7 @@ The same exported frame is also kept as a compact JPEG at [`docs/squish-circuit-
 - Seven ready-to-play scenes: Jelly cubes, Bouncing blobs, Low gravity, Heavy gravity, Obstacle course, Squish test, and Slow motion.
 - Verlet integration with structural, bend, and cross-body spring links.
 - Area preservation for internal pressure, edge collisions, obstacle collisions, soft-body overlap resolution, friction, and restitution.
-- Pointer drag-to-throw interaction, body selection, pause/reset, spring-guide visualization, keyboard shortcuts, and live energy/FPS/object metrics.
+- Pointer drag-to-throw interaction, body selection, pause/reset, spring-guide visualization, keyboard shortcuts, accessible preset/shape state, and live energy/FPS/object metrics.
 - A **SAVE PNG** action for downloading the current rendered field as a clean project snapshot.
 - No backend, database, API key, or runtime service. The built site is deployable as static files.
 

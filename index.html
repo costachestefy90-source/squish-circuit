@@ -55,25 +55,25 @@
               <span class="section-note">DATA PRESETS</span>
             </div>
             <div id="preset-grid" class="preset-grid" role="list" aria-label="Physics presets">
-              <button class="preset-button active" type="button" data-preset="jelly">
+              <button class="preset-button active" type="button" data-preset="jelly" aria-pressed="true">
                 <span class="preset-number">01</span><span><strong>Jelly cubes</strong><small>stack + settle</small></span>
               </button>
-              <button class="preset-button" type="button" data-preset="blobs">
+              <button class="preset-button" type="button" data-preset="blobs" aria-pressed="false">
                 <span class="preset-number">02</span><span><strong>Bouncing blobs</strong><small>high restitution</small></span>
               </button>
-              <button class="preset-button" type="button" data-preset="low-gravity">
+              <button class="preset-button" type="button" data-preset="low-gravity" aria-pressed="false">
                 <span class="preset-number">03</span><span><strong>Low gravity</strong><small>float study</small></span>
               </button>
-              <button class="preset-button" type="button" data-preset="heavy-gravity">
+              <button class="preset-button" type="button" data-preset="heavy-gravity" aria-pressed="false">
                 <span class="preset-number">04</span><span><strong>Heavy gravity</strong><small>impact lab</small></span>
               </button>
-              <button class="preset-button" type="button" data-preset="obstacle-course">
+              <button class="preset-button" type="button" data-preset="obstacle-course" aria-pressed="false">
                 <span class="preset-number">05</span><span><strong>Obstacle course</strong><small>thread the gates</small></span>
               </button>
-              <button class="preset-button" type="button" data-preset="squish-test">
+              <button class="preset-button" type="button" data-preset="squish-test" aria-pressed="false">
                 <span class="preset-number">06</span><span><strong>Squish test</strong><small>compression rig</small></span>
               </button>
-              <button class="preset-button" type="button" data-preset="slow-motion">
+              <button class="preset-button" type="button" data-preset="slow-motion" aria-pressed="false">
                 <span class="preset-number">07</span><span><strong>Slow motion</strong><small>watch the rebound</small></span>
               </button>
             </div>
@@ -85,10 +85,10 @@
               <span class="section-note" id="selected-shape-note">JELLY CUBE</span>
             </div>
             <div id="shape-picker" class="shape-picker" role="group" aria-label="Choose a shape to spawn">
-              <button class="shape-button active" type="button" data-shape="cube"><span class="shape-swatch cube-swatch" aria-hidden="true"></span><span>Cube</span></button>
-              <button class="shape-button" type="button" data-shape="blob"><span class="shape-swatch blob-swatch" aria-hidden="true"></span><span>Blob</span></button>
-              <button class="shape-button" type="button" data-shape="pillow"><span class="shape-swatch pillow-swatch" aria-hidden="true"></span><span>Pillow</span></button>
-              <button class="shape-button" type="button" data-shape="orb"><span class="shape-swatch orb-swatch" aria-hidden="true"></span><span>Orb</span></button>
+              <button class="shape-button active" type="button" data-shape="cube" aria-pressed="true"><span class="shape-swatch cube-swatch" aria-hidden="true"></span><span>Cube</span></button>
+              <button class="shape-button" type="button" data-shape="blob" aria-pressed="false"><span class="shape-swatch blob-swatch" aria-hidden="true"></span><span>Blob</span></button>
+              <button class="shape-button" type="button" data-shape="pillow" aria-pressed="false"><span class="shape-swatch pillow-swatch" aria-hidden="true"></span><span>Pillow</span></button>
+              <button class="shape-button" type="button" data-shape="orb" aria-pressed="false"><span class="shape-swatch orb-swatch" aria-hidden="true"></span><span>Orb</span></button>
             </div>
             <button id="spawn-button" class="primary-button" type="button"><span>＋</span> Spawn soft body <kbd>B</kbd></button>
           </section>
@@ -149,6 +149,7 @@
             <div class="stage-title"><span class="signal-icon" aria-hidden="true"></span><span id="scene-kicker">SCENE / JELLY CUBES</span></div>
             <div class="stage-tools">
               <button id="export-button" class="text-button stage-export-button" type="button" title="Download a PNG snapshot of the simulation">SAVE PNG</button>
+              <span id="export-status" class="export-status" aria-live="polite">READY</span>
               <label class="toggle-control"><input id="guides-toggle" type="checkbox" /><span class="toggle-track" aria-hidden="true"></span><span>Spring guides</span></label>
               <span class="stage-resolution">CANVAS / <span id="resolution-readout">—</span></span>
             </div>

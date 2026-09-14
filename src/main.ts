@@ -29,6 +29,7 @@ const selectedShapeNote = must<HTMLSpanElement>('selected-shape-note');
 const simStatus = must<HTMLSpanElement>('sim-status');
 const pauseButton = must<HTMLButtonElement>('pause-button');
 const exportButton = must<HTMLButtonElement>('export-button');
+const exportStatus = must<HTMLSpanElement>('export-status');
 const pausedBadge = must<HTMLDivElement>('paused-badge');
 const objectList = must<HTMLDivElement>('object-list');
 const emptyInspector = must<HTMLDivElement>('inspector-empty');
@@ -100,7 +101,17 @@ function selectedBody(): SoftBody | undefined {
 
 function updatePresetButtons(): void {
   document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) => {
-    button.classList.toggle('active', button.dataset.preset === engine.currentPreset.id);
+    const active = button.dataset.preset === engine.currentPreset.id;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+
+function updateShapeButtons(): void {
+  document.querySelectorAll<HTMLButtonElement>('[data-shape]').forEach((button) => {
+    const active = button.dataset.shape === selectedShape;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
   });
 }
 
@@ -417,20 +428,25 @@ document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((button) =
 document.querySelectorAll<HTMLButtonElement>('[data-shape]').forEach((button) => {
   button.addEventListener('click', () => {
     selectedShape = button.dataset.shape as SoftBodyShape;
-    document.querySelectorAll<HTMLButtonElement>('[data-shape]').forEach((candidate) => candidate.classList.toggle('active', candidate === button));
+    updateShapeButtons();
     selectedShapeNote.textContent = SHAPE_LABELS[selectedShape].toUpperCase();
   });
 });
 
 must<HTMLButtonElement>('spawn-button').addEventListener('click', spawnSelectedShape);
 exportButton.addEventListener('click', () => {
+  exportStatus.textContent = 'EXPORTING…';
   canvas.toBlob((blob) => {
-    if (!blob) return;
+    if (!blob) {
+      exportStatus.textContent = 'EXPORT FAILED';
+      return;
+    }
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.download = `squish-circuit-${engine.currentPreset.id}.png`;
     link.href = url;
     link.click();
+    exportStatus.textContent = 'SNAPSHOT READY';
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }, 'image/png');
 });
@@ -524,6 +540,7 @@ new ResizeObserver(resizeCanvas).observe(stageWrap);
 resizeCanvas();
 syncControls();
 updateSceneLabels();
+updateShapeButtons();
 renderObjectList();
 updateInspector();
 updatePauseState();
