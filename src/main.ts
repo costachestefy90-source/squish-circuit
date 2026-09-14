@@ -28,6 +28,7 @@ const sceneDescription = must<HTMLSpanElement>('scene-description');
 const selectedShapeNote = must<HTMLSpanElement>('selected-shape-note');
 const simStatus = must<HTMLSpanElement>('sim-status');
 const pauseButton = must<HTMLButtonElement>('pause-button');
+const exportButton = must<HTMLButtonElement>('export-button');
 const pausedBadge = must<HTMLDivElement>('paused-badge');
 const objectList = must<HTMLDivElement>('object-list');
 const emptyInspector = must<HTMLDivElement>('inspector-empty');
@@ -420,6 +421,17 @@ document.querySelectorAll<HTMLButtonElement>('[data-shape]').forEach((button) =>
 });
 
 must<HTMLButtonElement>('spawn-button').addEventListener('click', spawnSelectedShape);
+exportButton.addEventListener('click', () => {
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = `squish-circuit-${engine.currentPreset.id}.png`;
+    link.href = url;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, 'image/png');
+});
 must<HTMLButtonElement>('reset-button').addEventListener('click', () => loadPreset(engine.currentPreset.id));
 must<HTMLButtonElement>('remove-button').addEventListener('click', () => {
   if (selectedBodyId === null) return;

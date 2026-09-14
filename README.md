@@ -14,6 +14,7 @@ Squish Circuit is a static soft-body physics playground for Stardance: a small, 
 - Verlet integration with structural, bend, and cross-body spring links.
 - Area preservation for internal pressure, edge collisions, obstacle collisions, soft-body overlap resolution, friction, and restitution.
 - Pointer drag-to-throw interaction, body selection, pause/reset, spring-guide visualization, keyboard shortcuts, and live energy/FPS/object metrics.
+- A **SAVE PNG** action for downloading the current rendered field as a clean project snapshot.
 - No backend, database, API key, or runtime service. The built site is deployable as static files.
 
 ## Physics approach

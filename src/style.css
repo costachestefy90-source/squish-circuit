@@ -194,6 +194,7 @@ input[type='range']::-moz-range-thumb { width: 9px; height: 9px; border: 2px sol
 .stage-title { display: flex; align-items: center; gap: 8px; color: #d2d9f3; font-family: var(--mono); font-size: 9px; letter-spacing: .1em; }
 .signal-icon { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 12px rgba(247, 178, 104, .7); }
 .stage-tools { display: flex; align-items: center; gap: 16px; }
+.stage-export-button { color: var(--mint); }
 .stage-resolution { color: var(--subtle); font-family: var(--mono); font-size: 8px; }
 .toggle-control { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-family: var(--mono); font-size: 8px; cursor: pointer; }
 .toggle-control input { position: absolute; opacity: 0; pointer-events: none; }
