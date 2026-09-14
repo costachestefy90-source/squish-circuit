@@ -6,6 +6,8 @@ Squish Circuit is a static soft-body physics playground for Stardance: a small, 
 
 ![Squish Circuit playground preview](docs/squish-circuit-preview.png)
 
+The same exported frame is also kept as a compact JPEG at [`docs/squish-circuit-banner.jpg`](docs/squish-circuit-banner.jpg) for Stardance's banner uploader.
+
 ## What is inside
 
 - A responsive three-panel interface with a canvas stage, material controls, world controls, and a live object inspector.
